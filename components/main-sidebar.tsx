@@ -1,3 +1,5 @@
+"use client";
+
 import { usePathname } from "next/navigation";
 import {
   SidebarGroup,
@@ -68,7 +70,7 @@ function MainSidebar({ basePath }: { basePath: string }) {
         <SidebarMenu>
           {menuItems.map(({ title, url, iconPath }) => {
             const active = isActive(url);
-            const mapURL = `${basePath}/${url}`;
+            const mapURL = `${basePath}${url}`;
 
             return (
               <SidebarMenuItem key={title}>
@@ -89,17 +91,17 @@ function MainSidebar({ basePath }: { basePath: string }) {
                     aria-label={`Navigate to ${title}`}
                     className="flex items-center gap-3 w-full px-4"
                   >
-                  <Image
-                    src={iconPath}
-                    alt={title}
-                    aria-hidden="true"
-                    className="h-5 w-5 shrink-0"
-                    width={20}
-                    height={20}
-                  />
-                  <span className="text-small font-medium text-black">
-                    {title}
-                  </span>
+                    <Image
+                      src={iconPath}
+                      alt={title}
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0"
+                      width={20}
+                      height={20}
+                    />
+                    <span className="text-small font-medium text-black">
+                      {title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
