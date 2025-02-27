@@ -21,7 +21,7 @@ function SideBarHeader() {
             height={83}
             quality={100}
             priority
-            className="object-contain"
+            className="object-contain shrink-0"
           />
         </Link>
       </SidebarMenuButton>

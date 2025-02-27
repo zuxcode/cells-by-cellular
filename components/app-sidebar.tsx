@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { MainSidebar } from "./main-sidebar";
 import { SideBarHeader } from "./sidebar-header";
+import { NavUser } from "./nav-user";
 
 const BASE_URL = "/dashboard";
 
@@ -23,7 +24,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <MainSidebar basePath={BASE_URL}  />
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
+        <NavUser  />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
