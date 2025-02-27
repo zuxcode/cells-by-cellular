@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SettingSideBar } from "@/features/settings/settings-sidebar";
+import { SettingSideBar } from "@/features/settings";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";

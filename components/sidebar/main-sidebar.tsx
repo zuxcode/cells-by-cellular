@@ -7,7 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "./ui/sidebar";
+} from "../ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -62,21 +62,26 @@ const menuItems: MenuItem[] = [
 
 function MainSidebar({ basePath }: { basePath: string }) {
   const pathname = usePathname();
+  const normalizePath = (path: string) => path.replace(/\/+$/, ""); // Remove trailing slashes
 
-  const isActive = (url: string) => pathname.startsWith(url);
   return (
     <SidebarGroup className="pr-0">
       <SidebarGroupContent className="flex flex-col gap-4">
         <SidebarMenu>
           {menuItems.map(({ title, url, iconPath }) => {
-            const active = isActive(url);
             const mapURL = `${basePath}${url}`;
+            const normalizedPath = normalizePath(pathname);
+            const normalizedMapURL = normalizePath(mapURL);
+            const isHome = url === "/";
+            const active = isHome
+              ? normalizedPath === normalizedMapURL
+              : normalizedPath.startsWith(normalizedMapURL);
 
             return (
               <SidebarMenuItem key={title}>
                 <SidebarMenuButton
                   className={cn(
-                    "rounded-none pvl-8 h-[45px] border-r-[3px]",
+                    "rounded-none h-[45px] border-r-[3px]",
                     "hover:border-r-green-forest focus-visible:ring-green-forest", // Pseudo-class
                     "hover:bg-green-pale transition-colors duration-200",
                     active

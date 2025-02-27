@@ -2,9 +2,9 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { Poppins } from "next/font/google";
 
-import { Footer } from "@/features/footer/footer";
+import { Footer } from "@/components/footer";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
