@@ -63,7 +63,7 @@ function MainSidebar({ basePath }: { basePath: string }) {
 
   const isActive = (url: string) => pathname.startsWith(url);
   return (
-    <SidebarGroup className="px-0">
+    <SidebarGroup className="pr-0">
       <SidebarGroupContent className="flex flex-col gap-4">
         <SidebarMenu>
           {menuItems.map(({ title, url, iconPath }) => {
@@ -74,7 +74,7 @@ function MainSidebar({ basePath }: { basePath: string }) {
               <SidebarMenuItem key={title}>
                 <SidebarMenuButton
                   className={cn(
-                    "rounded-none pvl-8 h-[45px] border-r-[7px]",
+                    "rounded-none pvl-8 h-[45px] border-r-[3px]",
                     "hover:border-r-green-forest focus-visible:ring-green-forest", // Pseudo-class
                     "hover:bg-green-pale transition-colors duration-200",
                     active
@@ -89,17 +89,17 @@ function MainSidebar({ basePath }: { basePath: string }) {
                     aria-label={`Navigate to ${title}`}
                     className="flex items-center gap-3 w-full px-4"
                   >
-                    <Image
-                      src={iconPath}
-                      alt={title}
-                      aria-hidden="true"
-                      className="h-5 w-5 shrink-0"
-                      width={20}
-                      height={20}
-                    />
-                    <span className="text-small font-medium text-black">
-                      {title}
-                    </span>
+                  <Image
+                    src={iconPath}
+                    alt={title}
+                    aria-hidden="true"
+                    className="h-5 w-5 shrink-0"
+                    width={20}
+                    height={20}
+                  />
+                  <span className="text-small font-medium text-black">
+                    {title}
+                  </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

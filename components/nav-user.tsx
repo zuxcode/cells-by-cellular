@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeCheck,
@@ -7,13 +7,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,22 +18,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 const user = {
-  name: 'Alfred',
-  email: 'alfred@example.com',
-  avatar: 'https://media.licdn.com/dms/image/v2/D4D03AQGUGHUYNv0kig/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1714320312773?e=1746057600&v=beta&t=8e9n9fagqzH8eD26BxqCz8fc_rnTFW1t1pac3wyyC1g',
-}
+  name: "Alfred",
+  email: "alfred@example.com",
+  avatar:
+    "https://media.licdn.com/dms/image/v2/D4D03AQGUGHUYNv0kig/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1714320312773?e=1746057600&v=beta&t=8e9n9fagqzH8eD26BxqCz8fc_rnTFW1t1pac3wyyC1g",
+};
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -46,7 +44,11 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className={cn(
+                "data-[state=open]:bg-green-pale data-[state=open]:text-sidebar-accent-foreground",
+                "focus-visible:ring-green-forest", // Focus Effect
+                "hover:bg-green-pale transition-colors duration-200", // Hover Effect
+              )}
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -108,5 +110,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

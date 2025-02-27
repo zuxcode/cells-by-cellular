@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { CardHeader, CardTitle } from "@/components/ui/card";
+import {  CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 
-const BASE_URL = "/dashboard/system";
+const BASE_URL = "/dashboard/settings";
 
 const delta = [
   {

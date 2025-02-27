@@ -12,7 +12,6 @@ function SideBarHeader() {
         <Link
           href="/dashboard"
           aria-label="Return to dashboard home"
-          className="h-[100px] flex w-full items-center justify-center"
         >
           <Image
             alt="Cells logo"
@@ -21,7 +20,7 @@ function SideBarHeader() {
             height={83}
             quality={100}
             priority
-            className="object-contain shrink-0"
+            className="object-contain"
           />
         </Link>
       </SidebarMenuButton>
