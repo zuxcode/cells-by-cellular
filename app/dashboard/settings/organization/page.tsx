@@ -1,9 +1,7 @@
+import { OrganizationSettings } from "@/features/settings/organization-settings";
+
 function Page() {
-  return (
-    <div>
-      <h1>Organization</h1>
-    </div>
-  );
+  return <OrganizationSettings />
 }
 
 export default Page;

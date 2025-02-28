@@ -1,15 +1,17 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { UserSettingsForm } from "./components/user-settings-form";
-import { UserSettingsHeader } from "./components/user-settings-header";
+import { SettingCommonHeader } from "../common/setting-common-header";
 import { useUserSettings } from "./hooks/use-use-settings";
 import { useForm } from "react-hook-form";
-import { UserSettingsSchemaType } from "./server/schema/user-settings-schema";
+import { userBaseSchema, type UserBaseSchemaType } from "@/utils/zod-schema";
 
 function UserSettings() {
   const { onSubmit } = useUserSettings();
-  const form = useForm<UserSettingsSchemaType>({
+  const form = useForm<UserBaseSchemaType>({
+    resolver: zodResolver(userBaseSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -20,7 +22,7 @@ function UserSettings() {
       dateOfBirth: new Date(),
       city: "",
       state: "",
-      roleOrPosition: "Staff",
+      role: "Staff",
       country: "",
       LGA: "",
     },
@@ -29,7 +31,7 @@ function UserSettings() {
   return (
     <Form {...form}>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-        <UserSettingsHeader />
+        <SettingCommonHeader title="Personal Information" />
         <UserSettingsForm {...form} />
       </form>
     </Form>

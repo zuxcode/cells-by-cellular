@@ -1,9 +1,7 @@
+import { Security } from "@/features/settings/security";
+
 function Page() {
-  return (
-    <div>
-      <h1>Email-&-Password</h1>
-    </div>
-  );
+  return <Security />;
 }
 
 export default Page;

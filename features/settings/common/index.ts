@@ -1,0 +1,1 @@
+export { SettingCommonHeader } from "./setting-common-header";

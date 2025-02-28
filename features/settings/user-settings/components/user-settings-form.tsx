@@ -19,15 +19,14 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { GENDER_OPTIONS, ROLE_OPTIONS } from "@/utils/zod-schema";
+import { GENDERS, ROLES, UserBaseSchemaType } from "@/utils/zod-schema";
 import { UseFormReturn } from "react-hook-form";
-import { UserSettingsSchemaType } from "../server/schema/user-settings-schema";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
-type UserSettingsFormProps = UseFormReturn<UserSettingsSchemaType>;
+type UserSettingsFormProps = UseFormReturn<UserBaseSchemaType>;
 
 function UserSettingsForm(form: UserSettingsFormProps) {
   return (
@@ -77,7 +76,7 @@ function UserSettingsForm(form: UserSettingsFormProps) {
           name="lastName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel>Last Name (Surname)</FormLabel>
               <FormControl>
                 <Input
                   className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
@@ -145,7 +144,7 @@ function UserSettingsForm(form: UserSettingsFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {GENDER_OPTIONS.map((option) => (
+                  {GENDERS.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
@@ -286,7 +285,7 @@ function UserSettingsForm(form: UserSettingsFormProps) {
 
         <FormField
           control={form.control}
-          name="roleOrPosition"
+          name="role"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Position / Role</FormLabel>
@@ -297,7 +296,7 @@ function UserSettingsForm(form: UserSettingsFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {ROLE_OPTIONS.map((option) => (
+                  {ROLES.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
