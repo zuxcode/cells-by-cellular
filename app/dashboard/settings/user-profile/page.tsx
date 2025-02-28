@@ -1,8 +1,8 @@
+import { UserManagement } from "@/features/settings/user-management";
+
 function Page() {
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <UserManagement />
   );
 }
 

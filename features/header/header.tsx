@@ -34,7 +34,7 @@ function Header() {
           <div className={cn("hidden md:flex items-center gap-2")}>
             <NotificationButton
               hasNotification
-              notificationCount={12}
+              // notificationCount={12} // todo: add notification count
               aria-label="Unread notifications"
             />
             <AvatarEnhanced />
