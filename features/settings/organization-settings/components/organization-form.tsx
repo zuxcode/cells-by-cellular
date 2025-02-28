@@ -41,13 +41,13 @@ function OrganizationForm({
           name="name"
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel>Organization Name</FormLabel>
+              <FormLabel className="text-xs">Organization Name</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Organization Name"
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground  "
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -61,11 +61,11 @@ function OrganizationForm({
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Primary Service</FormLabel>
+              <FormLabel className="text-xs">Primary Service</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground">
-                    <SelectValue defaultValue={field.value} />
+                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground">
+                    <SelectValue defaultValue={field.value || undefined} placeholder="Select organization" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -89,12 +89,12 @@ function OrganizationForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-xs">Email</FormLabel>
               <FormControl>
                 <Input
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   placeholder="Email address"
                   {...field}
                 />
@@ -109,12 +109,12 @@ function OrganizationForm({
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel className="text-xs">Phone Number</FormLabel>
               <FormControl>
                 <Input
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   placeholder="+234 818 8945 858"
                   {...field}
                 />
@@ -129,12 +129,14 @@ function OrganizationForm({
           name="telPhoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Telephone Number(Optional)</FormLabel>
+              <FormLabel className="text-xs">
+                Telephone Number(Optional)
+              </FormLabel>
               <FormControl>
                 <Input
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   placeholder="+234 818 8945 858"
                   {...field}
                 />
@@ -146,20 +148,19 @@ function OrganizationForm({
       </div>
 
       {/* Row 3: Location Info */}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <FormField
           control={control}
-          name="country"
+          name="legalEntity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Legal Entity</FormLabel>
+              <FormLabel className="text-xs">Legal Entity</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground">
+                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground">
                     <SelectValue
-                      defaultValue={field.value}
-                      placeholder="Limited Liability Company"
+                      defaultValue={field.value || undefined}
+                      placeholder="Limited liability company"
                     />
                   </SelectTrigger>
                 </FormControl>
@@ -181,13 +182,13 @@ function OrganizationForm({
           name="regNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Registration Number</FormLabel>
+              <FormLabel className="text-xs">Registration Number</FormLabel>
               <FormControl>
                 <Input
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
                   placeholder="234567"
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -201,11 +202,11 @@ function OrganizationForm({
           name="taxId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tax Identification Number(Optional)</FormLabel>
+              <FormLabel className="text-xs">Tax ID Number (Optional)</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="234567"
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  placeholder="Tax Identification Number(Optional)"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -219,16 +220,16 @@ function OrganizationForm({
           name="numberOfEmployees"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Number of Employees</FormLabel>
+              <FormLabel className="text-xs">Number of Employees</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 value={field.value as unknown as string}
               >
                 <FormControl>
-                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground">
+                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground">
                     <SelectValue
-                      defaultValue={field.value}
-                      placeholder="10 - 36"
+                    defaultValue={field.value || undefined}
+                      placeholder="10-36"
                     />
                   </SelectTrigger>
                 </FormControl>
@@ -253,11 +254,11 @@ function OrganizationForm({
           name="country"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Country</FormLabel>
+              <FormLabel className="text-xs">Country</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground">
-                    <SelectValue placeholder="country" />
+                  <SelectTrigger className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground">
+                    <SelectValue defaultValue={field.value || undefined} placeholder="country" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -282,14 +283,15 @@ function OrganizationForm({
           control={control}
           name="state"
           render={({ field }) => (
-            <FormItem className="w-1/2">
+            <FormItem>
+              <FormLabel className="text-xs">State</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger
-                    disabled={!getValues("country")}
-                    className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                    disabled={getValues("country") === ""}
+                    className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   >
-                    <SelectValue placeholder="State" />
+                    <SelectValue defaultValue={field.value || undefined} placeholder="State" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -298,7 +300,7 @@ function OrganizationForm({
                     .map((option, index) => (
                       <SelectItem
                         key={keyExtractor(option.state_code, index)}
-                        value={option.name}
+                        value={option.id.toString()}
                       >
                         {option.name}
                       </SelectItem>
@@ -313,14 +315,16 @@ function OrganizationForm({
           control={control}
           name="city"
           render={({ field }) => (
-            <FormItem className="w-1/2">
+            <FormItem>
+              <FormLabel className="text-xs">City</FormLabel>
+
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger
-                    disabled={!getValues("state")}
-                    className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                    disabled={getValues("state") === ""}
+                    className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   >
-                    <SelectValue placeholder="State" />
+                    <SelectValue defaultValue={field.value || undefined} placeholder="city" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -328,7 +332,7 @@ function OrganizationForm({
                     .getCitiesOfState(Number(getValues("state")))
                     .map((option, index) => (
                       <SelectItem
-                        key={keyExtractor(option.state_code, index)}
+                        key={keyExtractor(option.name, index)}
                         value={option.name}
                       >
                         {option.name}
@@ -344,13 +348,177 @@ function OrganizationForm({
           control={control}
           name="postalCode"
           render={({ field }) => (
-            <FormItem className="w-[40%]">
+            <FormItem>
+              <FormLabel className="text-xs">Postal code</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Postal code"
                   disabled={formState.isSubmitting}
                   aria-disabled={formState.isSubmitting}
-                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)]   text-muted-foreground"
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+       {/* Row 3: Social Media */}
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <FormField
+          control={control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Website URL</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="facebook"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Facebook</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://facebook.com/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="instagram"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Instagram</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://instagram.com/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="tiktok"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Tiktok</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://tiktok.com/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+
+       {/* Row 4: Social Media */}
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <FormField
+          control={control}
+          name="linkedin"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">LinkedIn</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://linked.com/in/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="youtube"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">YouTube</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://youtube.com/channel/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="pinterest"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Pinterest</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://pinterest.com/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="twitter"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Twitter</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://twitter.com/username"
+                  disabled={formState.isSubmitting}
+                  aria-disabled={formState.isSubmitting}
+                  className="bg-neutral-050 border-none focus-visible:ring-[hsl(0,0%,80%)] text-[.625rem] placeholder:text-[.625rem] text-muted-foreground"
                   {...field}
                 />
               </FormControl>

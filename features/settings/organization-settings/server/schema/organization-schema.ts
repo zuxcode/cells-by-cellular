@@ -1,15 +1,13 @@
 import {
   contactLocationSchema,
-  phoneNumberSchema,
-  phoneNumberUtil,
+  phoneNumberSchema, socialMediaSchema
 } from "@/utils/zod-schema";
-import { PhoneNumber, PhoneNumberType } from "google-libphonenumber";
 import { z } from "zod";
 
 const ORGANIZATIONS = ["hotel", "restaurant", "cafe", "other"] as const;
 const LEGAL_ENTITIES = ["sole proprietor", "partnership", "other"] as const;
 
-const organizationSchema = contactLocationSchema.extend({
+const organizationBaseSchema = contactLocationSchema.extend({
   name: z
     .string()
     .trim()
@@ -21,12 +19,7 @@ const organizationSchema = contactLocationSchema.extend({
     errorMap: () => ({ message: "Please select a valid organization type" }),
   }),
 
-  telPhoneNumber: phoneNumberSchema.refine(
-    (num) =>
-      phoneNumberUtil.getNumberType(num as unknown as PhoneNumber) ===
-      PhoneNumberType.FIXED_LINE,
-    { message: "Must be a valid landline number" }
-  ),
+  telPhoneNumber: phoneNumberSchema,
 
   regNumber: z
     .string()
@@ -56,6 +49,8 @@ const organizationSchema = contactLocationSchema.extend({
   // TODO: Add postcode validation (from postcode-validator in zod-schema.ts)
   postalCode: z.string().transform((str) => str.trim()),
 });
+
+const organizationSchema = organizationBaseSchema.merge( socialMediaSchema);
 
 export { organizationSchema, LEGAL_ENTITIES, ORGANIZATIONS };
 
