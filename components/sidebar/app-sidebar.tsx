@@ -14,19 +14,23 @@ import { NavUser } from "./nav-user";
 
 const BASE_URL = "/dashboard";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function CustomAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar  collapsible="icon" {...props}>
       <SidebarHeader>
         <SideBarHeader />
       </SidebarHeader>
       <SidebarContent>
-        <MainSidebar basePath={BASE_URL}  />
+        <MainSidebar basePath={BASE_URL} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser  />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
 }
+
+const AppSidebar = React.memo(CustomAppSidebar);
+
+export { AppSidebar };

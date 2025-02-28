@@ -1,0 +1,1 @@
+export { AvatarEnhanced } from "./avatar";

@@ -1,4 +1,4 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcher } from "@/components/footer/theme-switcher";
 import Link from "next/link";
 
 function Footer() {
