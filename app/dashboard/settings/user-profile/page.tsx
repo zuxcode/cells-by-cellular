@@ -1,8 +1,8 @@
-import { UserManagement } from "@/features/settings/user-management";
+import { UserSettings } from "@/features/settings/user-settings";
 
 function Page() {
   return (
-    <UserManagement />
+    <UserSettings />
   );
 }
 

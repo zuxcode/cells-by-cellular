@@ -14,7 +14,7 @@ function SettingsPageLayout({ children }: React.PropsWithChildren) {
           <SettingSideBar />
         </CardHeader>
 
-        <CardContent className={cn("w-[78%]")}>{children}</CardContent>
+        <CardContent className={cn("w-[78%] p-6")}>{children}</CardContent>
       </Card>
     </PageLayout>
   );

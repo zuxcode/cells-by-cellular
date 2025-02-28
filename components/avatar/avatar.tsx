@@ -75,6 +75,7 @@ function AvatarEnhanced({
   return (
     <Button
       size="icon"
+      type="button"
       className={cn("h-8 w-8 p-0 rounded-full bg-white text-black hover:text-white", className)}
     >
       <Avatar className={AvatarClassName}>
