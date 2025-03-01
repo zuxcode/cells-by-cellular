@@ -8,5 +8,6 @@
         "subcomponent",
         "subcomponents",
         "tiktok"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
