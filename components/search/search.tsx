@@ -12,7 +12,7 @@ const searchVariants = cva(
     variants: {
       variant: {
         default: "bg-white rounded-full",
-        secondary: "bg-white rounded-lg",
+        secondary: "bg-white rounded-lg ring-2 ring-primary/50",
         tertiary: "bg-muted/50 border border-transparent",
       },
       size: {

@@ -76,8 +76,8 @@ const useActionDensity = () => {
  *
  * @example
  * <ActionTrigger intent="commit" density="prominent">
- *   <ActionTriggerIndicator symbol={Plus} />
- *   <ActionTriggerLabel>Confirm Order</ActionTriggerLabel>
+ *   <ActionIndicator symbol={Plus} />
+ *   <ActionLabel>Confirm Order</ActionLabel>
  * </ActionTrigger>
  */
 const ActionTrigger = forwardRef<HTMLButtonElement, ActionTriggerProps>(

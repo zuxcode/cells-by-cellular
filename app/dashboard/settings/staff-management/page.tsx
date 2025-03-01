@@ -1,9 +1,7 @@
+import { StaffManagement } from "@/features/settings/staff-management";
+
 function Page() {
-  return (
-    <div>
-      <h1>staff-management</h1>
-    </div>
-  );
+  return <StaffManagement />;
 }
 
 export default Page;

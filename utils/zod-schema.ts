@@ -21,6 +21,55 @@ function isValidPhoneNumber(number: string): boolean {
   }
 }
 
+const basePasswordSchema = z.string()
+  .trim()
+  .min(8, "Password must be at least 8 characters")
+  .max(64, "Password cannot exceed 64 characters")
+  .superRefine((password, ctx) => {
+    const validationChecks = {
+      hasUppercase: /[A-Z]/.test(password),
+      hasLowercase: /[a-z]/.test(password),
+      hasNumber: /[0-9]/.test(password),
+      hasSpecialChar: /[^A-Za-z0-9]/.test(password),
+      noWhitespace: !/\s/.test(password),
+    };
+
+    if (!validationChecks.hasUppercase) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Must contain at least one uppercase letter (A-Z)",
+      });
+    }
+
+    if (!validationChecks.hasLowercase) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Must contain at least one lowercase letter (a-z)",
+      });
+    }
+
+    if (!validationChecks.hasNumber) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Must contain at least one number (0-9)",
+      });
+    }
+
+    if (!validationChecks.hasSpecialChar) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Must contain at least one special character (!@#$%^&*)",
+      });
+    }
+
+    if (!validationChecks.noWhitespace) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Cannot contain spaces",
+      });
+    }
+  });
+
 const phoneNumberSchema = z
   .string()
   .nonempty({ message: "Phone number is required" })
@@ -128,6 +177,7 @@ export {
   addressSchema,
   socialMediaSchema,
   phoneNumberUtil,
+  basePasswordSchema
 };
 
 type UserBaseSchemaType = z.infer<typeof userBaseSchema>;
@@ -135,6 +185,7 @@ type PhoneNumberSchemaType = z.infer<typeof phoneNumberSchema>;
 type ContactLocationSchemaType = z.infer<typeof contactLocationSchema>;
 type AddressSchemaType = z.infer<typeof addressSchema>;
 type SocialMediaSchemaType = z.infer<typeof socialMediaSchema>;
+type BasePasswordSchemaType = z.infer<typeof basePasswordSchema>;
 
 export type {
   UserBaseSchemaType,
@@ -142,4 +193,5 @@ export type {
   ContactLocationSchemaType,
   AddressSchemaType,
   SocialMediaSchemaType,
+  BasePasswordSchemaType
 };
