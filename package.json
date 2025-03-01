@@ -4,6 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "tsx": "bunx tsc --noEmit",
     "db:type": "bunx supabase gen types typescript --project-id tnmuybjxosdtfjoumuav > utils/supabase/db-type.ts"
   },
   "dependencies": {
