@@ -1,36 +1,15 @@
 import { create } from "zustand";
-import { Database } from "@/utils/supabase/db-type";
 import { dummyRooms } from "./dummy-data";
-
-// type RoomStatus = Database["public"]["Enums"]["room_status_enum"];
-// type BedType = Database["public"]["Enums"]["bed_type_enum"];
-// type RoomType = Database["public"]["Enums"]["room_type_enum"];
+import { RoomBaseSchema } from "../type";
 
 // RoomStatus as string literals
-type RoomStatus =
-  | "available"
-  | "occupied"
-  | "maintenance"
-  | "cleaning"
-  | "reserved";
+type RoomStatus = RoomBaseSchema["room_status"];
 
 // BedType as string literals
-type BedType =
-  | "king"
-  | "queen"
-  | "twin"
-  | "double"
-  | "single"
-  | "bunk";
+type BedType = RoomBaseSchema["beds_name"];
 
 // RoomType as string literals
-type RoomType =
-  | "standard"
-  | "deluxe"
-  | "suite"
-  | "family"
-  | "penthouse"
-  | "executive";
+type RoomType = RoomBaseSchema["room_type"];
 
 interface RoomData {
   id: string;
@@ -80,6 +59,7 @@ const useRoomStore = create<RoomStore>((set, get) => ({
   setShouldShowAddRoomSection: () =>
     set((state) => ({
       shouldShowAddRoomSection: !state.shouldShowAddRoomSection,
+      
     })),
   selectedRoom: null,
   rooms: dummyRooms, //[],
@@ -119,6 +99,7 @@ const useRoomStore = create<RoomStore>((set, get) => ({
     const selectedRoom = get().rooms.filter((room) => room.id === id)[0];
     set(() => ({
       selectedRoom: selectedRoom,
+      shouldShowAddRoomSection: false,
     }));
   },
   getSelectedRoom: () => get().selectedRoom,

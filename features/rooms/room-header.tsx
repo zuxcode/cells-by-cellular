@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { RoomHeaderAction } from "./components/room-header-action";
 
 function RoomHeader() {
   return (
@@ -74,12 +75,7 @@ function RoomHeader() {
             </SelectContent>
           </Select>
 
-          <ActionTrigger asChild>
-            <div className="flex items-center gap-2 justify-center">
-              <ActionIndicator />
-              <ActionLabel>Create Room</ActionLabel>
-            </div>
-          </ActionTrigger>
+          <RoomHeaderAction />
         </div>
       </div>
     </header>
