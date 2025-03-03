@@ -1,10 +1,17 @@
 "use client";
 
-import { type RoomData, useRoomStore } from "./stores/";
+import { type RoomData, useRoomStore, useCreateRoomStore } from "./stores/";
 import { RoomCard } from "./components/room-card";
-import React, { useEffect } from "react";
+import React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 import { keyExtractor } from "@/utils/key-extractor";
+import { RoomListPageLayout } from "./components/page-layout";
+import { usePersistStore } from "@/hooks/use-persist-util";
+import Image from "next/image";
+interface RoomCardListProps {
+  roomsFromServerComponent: RoomData[];
+}
 
 interface RoomCardListProps {
   roomsFromServerComponent: RoomData[];
@@ -12,26 +19,40 @@ interface RoomCardListProps {
 
 function RoomCardList({ roomsFromServerComponent }: RoomCardListProps) {
   const isMobile = useIsMobile();
-  const {
-    rooms,
-    setSelectedRoom,
-    setRooms,
-    shouldShowAddRoomSection,
-    selectedRoom,
-  } = useRoomStore();
+  const { sectionControl } = useCreateRoomStore();
+  const { rooms, setSelectedRoom } = useRoomStore();
+
+  // const { rooms, setSelectedRoom, setRooms, selectedRoom } = store?.rooms;
+  // console.log("rooms: ", rooms);
 
   // Sync rooms from server component with the store
-  useEffect(() => {
-    setRooms(roomsFromServerComponent);
-  }, [roomsFromServerComponent, setRooms]);
+  // React.useEffect(() => {
+  //   setRooms(roomsFromServerComponent);
+  // }, [roomsFromServerComponent, setRooms]);
+
+  // const handleKeyDown = (id: string) => (e: React.KeyboardEvent) => {
+  //   if (e.key === "Enter" || e.key === " ") {
+  //     setSelectedRoom(id);
+  //   }
+  // };
 
   // Hide the list on mobile when showing add room section or a room is selected
-  if ((shouldShowAddRoomSection || selectedRoom) && isMobile) {
-    return null;
-  }
+  // console.log("isMobile: ", isMobile);
+
+  // if (isMobile && (sectionControl === "create" || selectedRoom !== null))
+  //   return null;
+
+  // if (rooms.length === 0)
+  //   return (
+  //     <RoomListPageLayout>
+  //       <div className="col-span-2 text-center py-8 text-gray-500">
+  //         No rooms available
+  //       </div>
+  //     </RoomListPageLayout>
+  //   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-1 gap-2 h-full">
+    <RoomListPageLayout>
       {rooms.map((room) => (
         <RoomCard
           key={keyExtractor(room.id, room.roomSize)}
@@ -44,6 +65,13 @@ function RoomCardList({ roomsFromServerComponent }: RoomCardListProps) {
               <RoomCard.Header>
                 <RoomCard.Title />
                 <RoomCard.Status />
+                <Image
+                  alt="tag"
+                  src="/svg/edit.svg"
+                  className="h-5 w-5"
+                  width={20}
+                  height={20}
+                />
               </RoomCard.Header>
               <RoomCard.Details />
               <RoomCard.Description />
@@ -57,8 +85,10 @@ function RoomCardList({ roomsFromServerComponent }: RoomCardListProps) {
           </RoomCard.Content>
         </RoomCard>
       ))}
-    </div>
+    </RoomListPageLayout>
   );
 }
 
-export { RoomCardList };
+const MemoizedRoomCard = React.memo(RoomCardList);
+
+export { MemoizedRoomCard };

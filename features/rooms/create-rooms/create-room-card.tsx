@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateRoomForm } from "./component/room-form";
-import { useRoomStore } from "../stores";
+import { useCreateRoomStore } from "../stores";
 
 function CreateRoomCard() {
-  const { shouldShowAddRoomSection } = useRoomStore();
+  const { sectionControl } = useCreateRoomStore();
 
-  if (!shouldShowAddRoomSection) return null;
+  if (sectionControl === "selected") return null;
 
   return (
     <Card className="bg-neutral-050 w-full">

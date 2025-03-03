@@ -1,7 +1,5 @@
-"use client";
-
-import { type RoomStatus, useRoomStore } from "../../stores";
 import { cn } from "@/lib/utils";
+import { RoomStatus } from "../../stores";
 
 // Room Specifications Component
 const RoomSpecifications = ({ children }: { children: React.ReactNode }) => (
@@ -33,7 +31,7 @@ const RoomStatusBadge = ({ status }: { status: RoomStatus }) => (
   <span
     className={cn(
       "text-sm px-2 py-1 rounded-md inline-block",
-      status === "occupied"
+      status === "Not-commissioned"
         ? "bg-red-100 text-red-600"
         : "bg-[#F1FFF6] text-[#03432F]"
     )}

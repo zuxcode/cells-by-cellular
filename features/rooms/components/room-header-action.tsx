@@ -5,19 +5,26 @@ import {
   ActionLabel,
   ActionTrigger,
 } from "@/components/button";
-import { useRoomStore } from "../stores";
+import { useCreateRoomStore } from "@/features/rooms/stores";
+import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 
 const RoomHeaderAction = () => {
-  const { shouldShowAddRoomSection, setShouldShowAddRoomSection } =
-    useRoomStore();
+  const { sectionControl, setSectionControl } = useCreateRoomStore();
 
   return (
-    <ActionTrigger className="transition-all" onClick={setShouldShowAddRoomSection} asChild>
+    <ActionTrigger
+      className={cn(
+        "h-9",
+        sectionControl === "create" && "bg-destructive hover:bg-destructive/80"
+      )}
+      onClick={setSectionControl}
+      asChild
+    >
       <div className="flex items-center gap-2 justify-center">
-        <ActionIndicator symbol={shouldShowAddRoomSection ? X : undefined} />
+        <ActionIndicator symbol={sectionControl === "create" ? X : undefined} />
         <ActionLabel>
-          {shouldShowAddRoomSection ? "Cancel" : "Create Room"}
+          {sectionControl === "create" ? "Cancel" : "Create Room"}
         </ActionLabel>
       </div>
     </ActionTrigger>

@@ -1,9 +1,9 @@
 "use client";
 
 import { Bed, Diameter, UsersRound } from "lucide-react";
-import { createContext, useContext, useCallback } from "react";
+import React, { createContext, useContext, useCallback } from "react";
 
-import { RoomData, useRoomStore } from "../stores";
+import { RoomData, useCreateRoomStore } from "../stores";
 import { MediaContainer } from "@/components/media";
 import { cn } from "@/lib/utils";
 import {
@@ -41,16 +41,15 @@ function useRoomCardContext() {
 
 // Main RoomCard component
 function RoomCard({ room, onSelect, children }: RoomCardProps) {
-  const { setShouldShowAddRoomSection, shouldShowAddRoomSection } =
-    useRoomStore();
+  const { setSectionControl, sectionControl } = useCreateRoomStore();
 
   // Memoize the handleSelectedRoom function to avoid unnecessary re-renders
   const handleSelectedRoom = useCallback(
     (id: string) => {
-      if (shouldShowAddRoomSection) setShouldShowAddRoomSection();
+      if (sectionControl === "create") setSectionControl();
       onSelect(id);
     },
-    [shouldShowAddRoomSection, setShouldShowAddRoomSection, onSelect]
+    [sectionControl, setSectionControl, onSelect]
   );
 
   return (
@@ -59,21 +58,7 @@ function RoomCard({ room, onSelect, children }: RoomCardProps) {
         className="hover:shadow-md transition md:h-[215px] cursor-pointer"
         onClick={() => handleSelectedRoom(room.id)}
       >
-        {children || (
-          <>
-            <RoomCard.Content>
-              <div className="flex flex-col gap-2 w-full">
-                <RoomCard.Header>
-                  <RoomCard.Title />
-                  <RoomCard.Status />
-                </RoomCard.Header>
-                <RoomCard.Details />
-                <RoomCard.Description />
-                <RoomCard.Footer />
-              </div>
-            </RoomCard.Content>
-          </>
-        )}
+        {children}
       </Card>
     </RoomCardContext.Provider>
   );
@@ -129,7 +114,7 @@ function RoomCardStatus() {
     <div
       className={cn(
         "absolute md:relative md:top-0 md:left-0 top-4 left-4 px-2 py-1 text-sm font-medium rounded-md",
-        room.status !== "available"
+        room.status === "Not-commissioned"
           ? "bg-red-100 text-red-600"
           : "bg-[#F1FFF6] text-[#03432F]"
       )}

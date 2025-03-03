@@ -1,14 +1,11 @@
 import { create } from "zustand";
-import { dummyRooms } from "./dummy-data";
+import { persist } from "zustand/middleware";
 import { RoomBaseSchema } from "../type";
 
-// RoomStatus as string literals
+import { dummyRooms } from "./dummy-data";
+
 type RoomStatus = RoomBaseSchema["room_status"];
-
-// BedType as string literals
 type BedType = RoomBaseSchema["beds_name"];
-
-// RoomType as string literals
 type RoomType = RoomBaseSchema["room_type"];
 
 interface RoomData {
@@ -26,83 +23,43 @@ interface RoomData {
 }
 
 interface RoomStore {
-  shouldShowAddRoomSection: boolean;
-  setShouldShowAddRoomSection: () => void;
   rooms: RoomData[];
-  files: File[];
-  setFiles: (files: File[]) => void;
-  removeFile: (fileName: string) => void;
-
-  setRooms: (rooms: RoomData[]) => void;
   selectedRoom: RoomData | null;
-  addRoom: (room: RoomData) => void;
-  updateRoom: (index: number, updatedRoom: Partial<RoomData>) => void;
-  deleteRoom: (index: number) => void;
-  getAvailableRooms: () => RoomData[];
+  setRooms: (rooms: RoomData[]) => void;
   setSelectedRoom: (id: string) => void;
-  getSelectedRoom: () => RoomData | null;
 }
 
-const useRoomStore = create<RoomStore>((set, get) => ({
-  files: [],
-  setFiles: (files) =>
-    set((state) => ({
-      files: files.length === 0 ? [...state.files] : [...files],
-    })),
+// const useRoomStore = create<RoomStore>()(
+//   persist(
+//     (set) => ({
+//       rooms: dummyRooms, // [],
+//       selectedRoom: null,
 
-  removeFile: (fileName) =>
-    set((state) => ({
-      files: state.files.filter((file) => file.name !== fileName),
-    })),
+//       setRooms: (rooms) => set({ rooms: [...rooms] }),
 
-  shouldShowAddRoomSection: false,
-  setShouldShowAddRoomSection: () =>
-    set((state) => ({
-      shouldShowAddRoomSection: !state.shouldShowAddRoomSection,
-      
-    })),
+//       setSelectedRoom: (id) => {
+//         set((state) => ({
+//           selectedRoom: state.rooms.find((room) => room.id === id),
+//         }));
+//       },
+//     }),
+//     {
+//       name: "room-storage",
+//     }
+//   )
+// );
+
+const useRoomStore = create<RoomStore>((set) => ({
+  rooms: dummyRooms, // [],
   selectedRoom: null,
-  rooms: dummyRooms, //[],
 
-  addRoom: (room) =>
+  setRooms: (rooms) => set({ rooms: [...rooms] }),
+
+  setSelectedRoom: (id) => {
     set((state) => ({
-      rooms: [...state.rooms, room],
-    })),
-  setRooms: (rooms) => {
-    set((state) => {
-      return {
-        rooms: rooms.length === 0 ? [...state.rooms] : [...rooms],
-      };
-    });
-  },
-
-  updateRoom: (index, updatedRoom) =>
-    set((state) => ({
-      rooms: state.rooms.map((room, i) =>
-        i === index ? { ...room, ...updatedRoom } : room
-      ),
-    })),
-
-  deleteRoom: (index) =>
-    set((state) => ({
-      rooms: state.rooms.filter((_, i) => i !== index),
-    })),
-
-  getAvailableRooms: () => {
-    const availableRooms = get().rooms.filter(
-      (room) => room.status === "available"
-    );
-    return availableRooms;
-  },
-
-  setSelectedRoom: (id: string) => {
-    const selectedRoom = get().rooms.filter((room) => room.id === id)[0];
-    set(() => ({
-      selectedRoom: selectedRoom,
-      shouldShowAddRoomSection: false,
+      selectedRoom: state.rooms.find((room) => room.id === id),
     }));
   },
-  getSelectedRoom: () => get().selectedRoom,
 }));
 
 export { useRoomStore };

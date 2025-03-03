@@ -8,6 +8,7 @@ import { useRoomStore } from "../stores";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { keyExtractor } from "@/utils/key-extractor";
+import { usePersistStore } from "@/hooks/use-persist-util";
 
 // Define the Carousel context type
 type CarouselContextType = {
@@ -169,7 +170,8 @@ Carousel.NextButton = () => <CarouselButton direction="next" />;
 
 // RoomImageCarousel component
 function RoomImageCarousel() {
-  const { selectedRoom } = useRoomStore();
+  const store = usePersistStore(useRoomStore, (state) => state)
+  const selectedRoom  = store?.selectedRoom
 
   if (!selectedRoom?.imageUrl?.length) return null;
 

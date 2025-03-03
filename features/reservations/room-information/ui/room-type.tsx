@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormProps } from "../types/type";
-import { ROOMS } from "../../server/schema/reservation-schema";
+import { roomType } from "@/types/global-type";
 
 function RoomType(form: FormProps) {
   return (
@@ -34,8 +34,7 @@ function RoomType(form: FormProps) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {/* @todo: replace with dynamic data */}
-              {ROOMS.flatMap((value) => (
+              {roomType.flatMap((value) => (
                 <SelectItem key={value} value={value}>{value}</SelectItem>
               ))}
             </SelectContent>

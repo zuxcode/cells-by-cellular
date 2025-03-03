@@ -26,8 +26,9 @@ import {
 } from "@/components/ui/select";
 import { roomSchema, RoomSchemaType } from "../schema/create-room-schema";
 import { RoomCounter } from "./room-counter";
-import { bedType, roomStatus } from "../../type";
 import { ActionLabel, ActionTrigger } from "@/components/button";
+import { bedType, roomStatus } from "@/types/global-type";
+import { keyExtractor } from "@/utils/key-extractor";
 
 function CreateRoomForm() {
   const form = useForm<RoomSchemaType>({
@@ -38,7 +39,7 @@ function CreateRoomForm() {
       price: "",
       description: "",
       beds_name: "single",
-      room_status: "available",
+      room_status: "Commissioned",
       room_size: "",
       beds_count: "1",
       max_occupancy: "1",
@@ -211,8 +212,8 @@ function CreateRoomForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {bedType.map((type) => (
-                      <SelectItem key={type} value={type}>
+                    {bedType.map((type, index) => (
+                      <SelectItem key={keyExtractor(type, index)} value={type}>
                         {type}
                       </SelectItem>
                     ))}
@@ -256,7 +257,7 @@ function CreateRoomForm() {
             name="room_status"
             render={({ field }) => (
               <FormItem className="w-full space-y-1">
-               <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
+                <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
                   <Image
                     alt="room size"
                     src="/svg/status-info.svg"
@@ -276,8 +277,11 @@ function CreateRoomForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {roomStatus.map((status) => (
-                      <SelectItem key={status} value={status}>
+                    {roomStatus.map((status, index) => (
+                      <SelectItem
+                        key={keyExtractor(status, index)}
+                        value={status}
+                      >
                         {status}
                       </SelectItem>
                     ))}
@@ -295,13 +299,13 @@ function CreateRoomForm() {
           render={({ field }) => (
             <FormItem className="w-full space-y-1">
               <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
-                  <Image
-                    alt="room size"
-                    src="/svg/chair.svg"
-                    className="h-5 w-5"
-                    width={20}
-                    height={20}
-                  />
+                <Image
+                  alt="room size"
+                  src="/svg/chair.svg"
+                  className="h-5 w-5"
+                  width={20}
+                  height={20}
+                />
                 Room Description
               </FormLabel>
               <FormControl>
@@ -322,14 +326,14 @@ function CreateRoomForm() {
           name="features"
           render={({ field }) => (
             <FormItem className="w-full space-y-1">
-               <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
-                  <Image
-                    alt="room size"
-                    src="/svg/star.svg"
-                    className="h-5 w-5"
-                    width={20}
-                    height={20}
-                  />
+              <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
+                <Image
+                  alt="room size"
+                  src="/svg/star.svg"
+                  className="h-5 w-5"
+                  width={20}
+                  height={20}
+                />
                 Room Features
               </FormLabel>
               <FormControl>

@@ -1,9 +1,4 @@
 import {
-  ActionIndicator,
-  ActionTrigger,
-  ActionLabel,
-} from "@/components/button";
-import {
   SearchField,
   SearchIcon,
   SearchLabel,
@@ -18,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { RoomHeaderAction } from "./components/room-header-action";
+import { roomType } from "@/types/global-type";
+import { keyExtractor } from "@/utils/key-extractor";
 
 function RoomHeader() {
   return (
@@ -42,18 +39,18 @@ function RoomHeader() {
         <div className={cn("flex items-center gap-4 min-w-0")}>
           <SearchProvider
             variant="secondary"
-            className="min-w-[217px] flex-1 basis-[217px]"
+            className="min-w-[217px] h-9 flex-1 basis-[217px]"
           >
             <SearchLabel className="sr-only">Search</SearchLabel>
             <SearchIcon clickable className="text-black" />
             <SearchField
               placeholder="Search Rooms Types, etc"
-              className="text-black placeholder:text-black"
+              className="text-black placeholder:text-black text-[.625rem]"
             />
           </SearchProvider>
 
           <Select>
-            <SelectTrigger className="min-w-[140px] max-w-full text-[12px] rounded-md bg-white gap-2 hover:shadow-md">
+            <SelectTrigger className="min-w-[140px] max-w-full text-[.625rem] rounded-md bg-white gap-2 hover:shadow-md">
               <SelectValue placeholder="Popular" />
             </SelectTrigger>
             <SelectContent>
@@ -63,15 +60,15 @@ function RoomHeader() {
           </Select>
 
           <Select>
-            <SelectTrigger className="min-w-[100px] max-w-full text-[12px] rounded-md bg-white gap-2 hover:shadow-md">
+            <SelectTrigger className="min-w-[100px] max-w-full text-[.625rem] rounded-md bg-white gap-2 hover:shadow-md">
               <SelectValue placeholder="All Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="single">Single</SelectItem>
-              <SelectItem value="double">Double</SelectItem>
-              <SelectItem value="suite">Suite</SelectItem>
-              <SelectItem value="economy">Economy</SelectItem>
-              <SelectItem value="deluxe">Deluxe</SelectItem>
+              {roomType.map((value, index) => (
+                <SelectItem key={keyExtractor(value, index)} value={value}>
+                  {value}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

@@ -7,7 +7,7 @@ const dummyRooms: RoomData[] = [
     id: "1",
     imageUrl: [IMG_URL, '/images/the-white-orchid-hotel.jpg'],
     title: "Deluxe Ocean View Suite",
-    status: "available",
+    status: "Commissioned",
     description:
       "A luxurious suite with breathtaking ocean views, perfect for a relaxing getaway.",
     price: "$350",
@@ -15,18 +15,18 @@ const dummyRooms: RoomData[] = [
     bedType: "king",
     roomSize: 45,
     totalRooms: 10,
-    roomsOccupied: 3,
+    roomsOccupied: 3
   },
   {
     id: "2",
     imageUrl: [IMG_URL, IMG_URL],
     title: "Standard Twin Room",
-    status: "occupied",
+    status: "Commissioned",
     description:
       "A cozy twin room with modern amenities, ideal for short stays.",
     price: "$150",
     maxGuests: 2,
-    bedType: "twin",
+    bedType: "king",
     roomSize: 25,
     totalRooms: 15,
     roomsOccupied: 15,
@@ -35,7 +35,7 @@ const dummyRooms: RoomData[] = [
     id: "3",
     imageUrl: [IMG_URL],
     title: "Executive King Room",
-    status: "maintenance",
+    status: "Not-commissioned",
     description:
       "An elegant king room designed for business travelers, featuring a work desk and high-speed internet.",
     price: "$250",
@@ -49,7 +49,7 @@ const dummyRooms: RoomData[] = [
     id: "4",
     imageUrl: [IMG_URL],
     title: "Family Suite",
-    status: "available",
+    status: "Commissioned",
     description:
       "A spacious suite with two bedrooms, perfect for families or groups.",
     price: "$400",
@@ -63,7 +63,7 @@ const dummyRooms: RoomData[] = [
     id: "5",
     imageUrl: [IMG_URL],
     title: "Luxury Penthouse",
-    status: "available",
+    status: "Commissioned",
     description:
       "The ultimate luxury experience with a private terrace, jacuzzi, and panoramic city views.",
     price: "$800",

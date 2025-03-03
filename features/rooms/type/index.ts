@@ -1,7 +1,4 @@
 export {
-  bedType,
-  roomType,
-  roomStatus,
   bedTypesEnum,
   roomStatusEnum,
   roomTypesEnum,
