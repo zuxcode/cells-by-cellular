@@ -6,11 +6,10 @@ export type Element<T extends React.ElementType = "div"> =
     as?: T;
   };
 
-export type SeverState<F = undefined> =
-  z.typeToFlattenedError<F>["fieldErrors"] & {
-    status: "success" | "error";
-    message: string;
-  };
+export interface SeverResponse {
+  status: "success" | "error";
+  message: string;
+}
 
 // type roomStatus = Database["public"]["Enums"]["room_status_enum"];
 // type bedType = Database["public"]["Enums"]["bed_type_enum"];
@@ -37,4 +36,4 @@ export {
   RoomTypeEnum,
 };
 
-export type { BedType, RoomStatus, RoomType};
+export type { BedType, RoomStatus, RoomType };

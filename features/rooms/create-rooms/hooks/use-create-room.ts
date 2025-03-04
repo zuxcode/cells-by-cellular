@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/client";
 import { RoomSchemaType } from "../schema/create-room-schema";
 import { v4 as uuidv4 } from "uuid";
-import { handleServerErrors } from "@/utils/handle-server-error";
 import toast from "react-hot-toast";
 
 const useCreateRoom = () => {

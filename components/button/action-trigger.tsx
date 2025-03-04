@@ -92,12 +92,13 @@ const ActionTrigger = forwardRef<HTMLButtonElement, ActionTriggerProps>(
           isProcessing && "pointer-events-none opacity-70"
         )}
         aria-disabled={isProcessing}
+        disabled={isProcessing}
         {...props}
       >
         {isProcessing ? (
           <span className="flex items-center gap-2">
-           <Loader2 className="animate-spin" />
-          <span className="animate-pulse">Processing...</span>
+            <Loader2 className="animate-spin" />
+            <span className="animate-pulse">Processing...</span>
           </span>
         ) : (
           children

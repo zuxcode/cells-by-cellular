@@ -26,12 +26,18 @@ function SelectedRoom() {
 
   if (sectionControl !== "selected") return null;
 
-  const status = selectedRoom ? selectedRoom.status : "Commissioned";
+  if (!selectedRoom) {
+    return <div>Select a room to view details</div>;
+  }
+
+  const { title, status, price, bedType, roomSize, maxGuests, description } =
+    selectedRoom;
+
   return (
     <Card className="bg-canvas-cool">
       <CardHeader className="p-2 flex-row justify-between items-center">
         <CardTitle className="text-green-forest font-extrabold md:text-base w-4/5">
-          {selectedRoom?.title}
+          {title}
         </CardTitle>
 
         <Button className="bg-neutral-600 px-4 w-1/5">Edit</Button>
@@ -48,9 +54,7 @@ function SelectedRoom() {
               width={20}
               height={20}
             />
-            <p className="text-black text-sm">
-              Price: {selectedRoom?.price}/Night
-            </p>
+            <p className="text-black text-sm">Price: {price}/Night</p>
           </div>
 
           <div className="w-[30%]">
@@ -78,7 +82,7 @@ function SelectedRoom() {
               width={20}
               height={20}
             />
-            {selectedRoom?.bedType}
+            {bedType}
           </p>
 
           <p className="flex items-center gap-2">
@@ -89,16 +93,16 @@ function SelectedRoom() {
               width={20}
               height={20}
             />
-            {selectedRoom?.roomSize}&nbsp;m²
+            {roomSize}&nbsp;m²
           </p>
 
           <p className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            {selectedRoom?.maxGuests}&nbsp;Guest
+            {maxGuests}&nbsp;Guest
           </p>
         </div>
         <div>
-          <p>{selectedRoom?.description}</p>
+          <p>{description}</p>
         </div>
 
         <section className="space-y-2">

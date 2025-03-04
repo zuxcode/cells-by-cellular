@@ -1,13 +1,9 @@
-import { resetPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import { resetPasswordAction } from "@/features/auth/actions/actions";
+import { ActionTrigger, ActionLabel } from "@/components/button/action-trigger";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default async function ResetPassword(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
+export default async function ResetPassword() {
   return (
     <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
       <h1 className="text-2xl font-medium">Reset password</h1>
@@ -28,10 +24,9 @@ export default async function ResetPassword(props: {
         placeholder="Confirm password"
         required
       />
-      <SubmitButton formAction={resetPasswordAction}>
-        Reset password
-      </SubmitButton>
-      <FormMessage message={searchParams} />
+      <ActionTrigger formAction={resetPasswordAction}>
+        <ActionLabel>Reset password</ActionLabel>
+      </ActionTrigger>
     </form>
   );
 }

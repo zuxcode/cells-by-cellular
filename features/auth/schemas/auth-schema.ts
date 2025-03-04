@@ -1,0 +1,32 @@
+import { basePasswordSchema, userBaseSchema } from "@/utils/zod-schema";
+import { z } from "zod";
+
+export const signInSchema = z.object({
+  email: z.string().nonempty("Email is required").email("Invalid email"),
+  password: basePasswordSchema,
+  rememberMe: z.boolean().default(false),
+});
+
+export const signUpSchema = signInSchema.omit({ rememberMe: true }).merge(
+  z.object({
+    fullName: z
+      .string()
+      .trim()
+      .min(2, "First name must be at least 2 characters")
+      .max(50, "First name cannot exceed 50 characters")
+      .regex(
+        /^[A-Za-z'-]+$/,
+        "First name can Only contain letters, apostrophes, and hyphens"
+      ),
+  })
+);
+
+//     z.object({
+//     fullName: fullNameValidation,
+//     email: z.string().nonempty("Email is required").email("Invalid email"),
+//     password: passwordValidation,
+//     phone: phoneValidation.optional(),
+//   });
+
+export type SignInSchemaType = z.infer<typeof signInSchema>;
+export type SignUpSchemaType = z.infer<typeof signUpSchema>;

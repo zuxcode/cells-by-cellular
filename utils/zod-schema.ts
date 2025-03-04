@@ -1,9 +1,6 @@
 import libphonenumber from "google-libphonenumber";
 import { z } from "zod";
-import {
-  postcodeValidator,
-  postcodeValidatorExistsForCountry,
-} from "postcode-validator";
+import { postcodeValidator } from "postcode-validator";
 
 const phoneNumberUtil = libphonenumber.PhoneNumberUtil.getInstance();
 
@@ -21,7 +18,8 @@ function isValidPhoneNumber(number: string): boolean {
   }
 }
 
-const basePasswordSchema = z.string()
+const basePasswordSchema = z
+  .string()
   .trim()
   .min(8, "Password must be at least 8 characters")
   .max(64, "Password cannot exceed 64 characters")
@@ -167,7 +165,6 @@ const userBaseSchema = contactLocationSchema.extend({
   }),
 });
 
-
 export {
   userBaseSchema,
   GENDERS,
@@ -177,7 +174,7 @@ export {
   addressSchema,
   socialMediaSchema,
   phoneNumberUtil,
-  basePasswordSchema
+  basePasswordSchema,
 };
 
 type UserBaseSchemaType = z.infer<typeof userBaseSchema>;
@@ -193,5 +190,5 @@ export type {
   ContactLocationSchemaType,
   AddressSchemaType,
   SocialMediaSchemaType,
-  BasePasswordSchemaType
+  BasePasswordSchemaType,
 };
