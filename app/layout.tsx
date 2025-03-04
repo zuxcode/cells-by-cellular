@@ -39,13 +39,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider >
-            <AppSidebar />
-            <SidebarInset>
-              <Header />
-              <main>{children}</main>
-            </SidebarInset>
-          </SidebarProvider>
+          <main>{children}</main>
           <Footer />
           <Toaster position="top-right" />
         </ThemeProvider>
