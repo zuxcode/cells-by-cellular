@@ -1,9 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
     "tsx": "bunx tsc --noEmit",
     "db:type": "bunx supabase gen types typescript --project-id tnmuybjxosdtfjoumuav > utils/supabase/db-type.ts"
   },
