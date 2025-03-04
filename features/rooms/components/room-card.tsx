@@ -13,6 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 // Define context value type
 interface RoomCardContextValue {
@@ -91,7 +93,7 @@ function RoomCardImage() {
 // RoomCardHeader component
 function RoomCardHeader({ children }: { children: React.ReactNode }) {
   return (
-    <CardHeader className="md:flex-row justify-between p-0 space-y-0 w-full">
+    <CardHeader className="md:grid md:grid-cols-[3fr_1.5fr_0.5fr] h-fit items-center justify-between p-0 space-y-0 w-full gap-4">
       {children}
     </CardHeader>
   );
@@ -101,7 +103,7 @@ function RoomCardHeader({ children }: { children: React.ReactNode }) {
 function RoomCardTitle() {
   const { room } = useRoomCardContext();
   return (
-    <CardTitle className="md:text-base font-bold text-gray-accent">
+    <CardTitle className="md:text-base font-bold text-neutral-600 ">
       {room.title}
     </CardTitle>
   );
@@ -124,17 +126,43 @@ function RoomCardStatus() {
   );
 }
 
+// RoomEditButton component
+function RoomEditButton() {
+  return (
+    <Button
+      variant="ghost"
+      className={cn(
+        "absolute md:relative md:top-0 md:left-0 top-3 right-3 px-2 py-1 text-sm font-medium rounded-md"
+      )}
+    >
+      <Image
+        alt="tag"
+        src="/svg/edit.svg"
+        className="h-5 w-5"
+        width={20}
+        height={20}
+      />
+    </Button>
+  );
+}
+
 // RoomCardDetails component
 function RoomCardDetails() {
   const { room } = useRoomCardContext();
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-8">
       <span className="flex items-center gap-1">
         <Diameter className="w-4 h-4" />
         {room.roomSize}m²
       </span>
       <span className="flex items-center gap-1">
-        <Bed className="w-4 h-4" />
+        <Image
+        alt="tag"
+        src="/svg/bed-head.svg"
+        className="h-4 w-4"
+        width={16}
+        height={16}
+      />
         {room.bedType}
       </span>
       <span className="flex items-center gap-1">
@@ -159,12 +187,7 @@ function RoomCardDescription() {
 function RoomCardFooter({ children }: { children?: React.ReactNode }) {
   return (
     <CardFooter className="text-lg flex md:justify-between items-center md:gap-4 p-2 h-[30%]">
-      {children || (
-        <>
-          <RoomCardAvailability />
-          <RoomCardPrice />
-        </>
-      )}
+      {children }
     </CardFooter>
   );
 }
@@ -202,5 +225,6 @@ RoomCard.Description = RoomCardDescription;
 RoomCard.Footer = RoomCardFooter;
 RoomCard.Availability = RoomCardAvailability;
 RoomCard.Price = RoomCardPrice;
+RoomCard.EditButton = RoomEditButton;
 
 export { RoomCard };

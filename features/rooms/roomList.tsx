@@ -65,20 +65,14 @@ function RoomCardList({ roomsFromServerComponent }: RoomCardListProps) {
               <RoomCard.Header>
                 <RoomCard.Title />
                 <RoomCard.Status />
-                <Image
-                  alt="tag"
-                  src="/svg/edit.svg"
-                  className="h-5 w-5"
-                  width={20}
-                  height={20}
-                />
+                <RoomCard.EditButton />
               </RoomCard.Header>
               <RoomCard.Details />
               <RoomCard.Description />
               <RoomCard.Footer>
                 <div className="flex items-center justify-between w-full">
-                  <RoomCard.Price />
                   <RoomCard.Availability />
+                  <RoomCard.Price />
                 </div>
               </RoomCard.Footer>
             </div>

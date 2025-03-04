@@ -8,7 +8,6 @@ import { useRoomStore } from "../stores";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { keyExtractor } from "@/utils/key-extractor";
-import { usePersistStore } from "@/hooks/use-persist-util";
 
 // Define the Carousel context type
 type CarouselContextType = {
@@ -59,7 +58,6 @@ function Carousel({ images, children }: CarouselProps) {
 // Carousel main image component
 const CarouselMainImage = ({ className }: { className?: string }) => {
   const { images, currentIndex } = useCarousel();
-
   return (
     <div
       className={cn(
@@ -82,7 +80,7 @@ const CarouselMainImage = ({ className }: { className?: string }) => {
             fill
             quality={100}
             className="object-cover rounded-lg"
-            priority
+            priority={currentIndex === 0}
           />
         </motion.div>
       </AnimatePresence>
@@ -94,16 +92,18 @@ const CarouselMainImage = ({ className }: { className?: string }) => {
 const CarouselThumbnails = ({ windowSize = 3 }: { windowSize?: number }) => {
   const { images, currentIndex, setIndex } = useCarousel();
 
+  const localizeImageLength = images.length > 3 ? windowSize : images.length;
+
   const getVisibleIndices = () => {
     const start = Math.max(
       0,
       Math.min(
-        currentIndex - Math.floor(windowSize / 2),
-        images.length - windowSize
+        currentIndex - Math.floor(localizeImageLength / 2),
+        images.length - localizeImageLength
       )
     );
     return Array.from(
-      { length: windowSize },
+      { length: localizeImageLength },
       (_, i) => (start + i) % images.length
     );
   };
@@ -118,7 +118,7 @@ const CarouselThumbnails = ({ windowSize = 3 }: { windowSize?: number }) => {
           className={cn(
             "w-20 h-20 rounded-lg overflow-hidden border-2 transition-all",
             currentIndex === index
-              ? "border-indigo-500"
+              ? "border-green-forest"
               : "border-transparent opacity-75 hover:opacity-100"
           )}
           onClick={() => setIndex(index)}
@@ -151,6 +151,7 @@ const CarouselButton = ({
   return (
     <Button
       variant="ghost"
+      aria-label={`${direction === "prev" ? "Previous" : "Next"} image`}
       className={cn(
         "px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-lg transition",
         className
@@ -170,16 +171,15 @@ Carousel.NextButton = () => <CarouselButton direction="next" />;
 
 // RoomImageCarousel component
 function RoomImageCarousel() {
-  const store = usePersistStore(useRoomStore, (state) => state)
-  const selectedRoom  = store?.selectedRoom
+  const { selectedRoom } = useRoomStore();
 
-  if (!selectedRoom?.imageUrl?.length) return null;
+  if (!selectedRoom || !selectedRoom.imageUrl?.length) return null;
 
   return (
     <Carousel images={selectedRoom.imageUrl}>
       <Carousel.Main />
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2">
         <Carousel.PrevButton />
         <Carousel.Thumbnails windowSize={3} />
         <Carousel.NextButton />

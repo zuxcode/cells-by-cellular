@@ -1,1 +1,0 @@
-export {RoomDetailCard} from './room-detail-card'

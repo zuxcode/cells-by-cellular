@@ -1,11 +1,18 @@
 import { RoomData } from "./room-store";
 
-const IMG_URL = '/images/the-white-orchid-hotel.jpg'
+const IMG_URL = [
+  "/images/intercontinental-lagos.jpg",
+  "/images/swimming-pool.jpg",
+  "/images/exterior.jpg",
+  // "/images/intercontinental-lagos.jpg",
+  // "/images/swimming-pool.jpg",
+  // "/images/exterior.jpg",
+];
 
 const dummyRooms: RoomData[] = [
   {
     id: "1",
-    imageUrl: [IMG_URL, '/images/the-white-orchid-hotel.jpg'],
+    imageUrl: IMG_URL,
     title: "Deluxe Ocean View Suite",
     status: "Commissioned",
     description:
@@ -15,11 +22,11 @@ const dummyRooms: RoomData[] = [
     bedType: "king",
     roomSize: 45,
     totalRooms: 10,
-    roomsOccupied: 3
+    roomsOccupied: 3,
   },
   {
     id: "2",
-    imageUrl: [IMG_URL, IMG_URL],
+    imageUrl: IMG_URL,
     title: "Standard Twin Room",
     status: "Commissioned",
     description:
@@ -33,7 +40,7 @@ const dummyRooms: RoomData[] = [
   },
   {
     id: "3",
-    imageUrl: [IMG_URL],
+    imageUrl: IMG_URL,
     title: "Executive King Room",
     status: "Not-commissioned",
     description:
@@ -47,11 +54,11 @@ const dummyRooms: RoomData[] = [
   },
   {
     id: "4",
-    imageUrl: [IMG_URL],
+    imageUrl: IMG_URL,
     title: "Family Suite",
     status: "Commissioned",
     description:
-      "A spacious suite with two bedrooms, perfect for families or groups.",
+      "A spacious suite with two bedrooms, perfect for families or groups. A luxurious suite with breathtaking ocean views, perfect for a relaxing getaway. A luxurious suite with breathtaking ocean views, perfect for a relaxing getaway. A luxurious suite with breathtaking ocean views, perfect for a relaxing getaway.",
     price: "$400",
     maxGuests: 6,
     bedType: "queen",
@@ -61,7 +68,7 @@ const dummyRooms: RoomData[] = [
   },
   {
     id: "5",
-    imageUrl: [IMG_URL],
+    imageUrl: IMG_URL,
     title: "Luxury Penthouse",
     status: "Commissioned",
     description:

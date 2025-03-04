@@ -20,4 +20,21 @@ const bedType = ["single", "double", "queen", "king"] as const;
 const roomStatus = ["Commissioned", "Not-commissioned"] as const;
 const roomType = ["single", "double", "suite", "family"] as const;
 
-export { bedType, roomStatus, roomType };
+const BedTypeEnum = z.enum(bedType);
+const RoomStatusEnum = z.enum(roomStatus);
+const RoomTypeEnum = z.enum(roomType);
+
+type BedType = z.infer<typeof BedTypeEnum>;
+type RoomStatus = z.infer<typeof RoomStatusEnum>;
+type RoomType = z.infer<typeof RoomTypeEnum>;
+
+export {
+  bedType,
+  roomStatus,
+  roomType,
+  BedTypeEnum,
+  RoomStatusEnum,
+  RoomTypeEnum,
+};
+
+export type { BedType, RoomStatus, RoomType};
