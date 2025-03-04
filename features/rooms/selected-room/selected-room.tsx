@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useRoomStore } from "../stores";
+import { useCreateRoomStore, useRoomStore } from "../stores";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,9 @@ const features = ["Wi-Fi", "TV", "Heating", "Air Conditioning"];
 
 function SelectedRoom() {
   const { selectedRoom } = useRoomStore();
+  const { sectionControl } = useCreateRoomStore();
+
+  if (sectionControl !== "selected") return null;
 
   const status = selectedRoom ? selectedRoom.status : "Commissioned";
   return (
@@ -102,23 +105,21 @@ function SelectedRoom() {
           <h5 className="text-[.75rem] text-black font-semibold">Features</h5>
 
           <div className="grid grid-cols-2 gap-4">
-            {
-              features.map((feature, index) => (
-                <div
-                  key={keyExtractor(feature, index)}
-                  className="flex items-center gap-2 text-sm text-black"
-                >
-                  <Image
-                    alt="tag"
-                    src="/svg/good-check.svg"
-                    className="h-5 w-5"
-                    width={20}
-                    height={20}
-                  />
-                  {feature}
-                </div>
-              ))
-            }
+            {features.map((feature, index) => (
+              <div
+                key={keyExtractor(feature, index)}
+                className="flex items-center gap-2 text-sm text-black"
+              >
+                <Image
+                  alt="tag"
+                  src="/svg/good-check.svg"
+                  className="h-5 w-5"
+                  width={20}
+                  height={20}
+                />
+                {feature}
+              </div>
+            ))}
           </div>
         </section>
       </CardDescription>
