@@ -38,6 +38,7 @@ function SignUpForm() {
   const onSubmitWrapper = async (data: SignUpSchemaType) => {
     onSubmit(data, form);
   };
+  console.log("form: ", form.formState.isValid);
 
   return (
     <Form {...form}>
@@ -121,7 +122,7 @@ function SignUpForm() {
         />
         <ActionTrigger
           disabled={form.formState.isSubmitting || !form.formState.isValid}
-          aria-disabled={form.formState.isSubmitting || !form.formState.isValid}
+          aria-disabled={form.formState.isSubmitting || form.formState.isValid}
           isProcessing={form.formState.isSubmitting}
         >
           <ActionLabel>Sign up</ActionLabel>

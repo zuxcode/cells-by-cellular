@@ -76,6 +76,7 @@ export const signInAction = async (
     // Redirect on successful sign-in
     redirect("/dashboard");
   } catch (error) {
+    console.log("error: ", error);
     // logger.error("Sign-in error:", error); // Structured logging
 
     return {

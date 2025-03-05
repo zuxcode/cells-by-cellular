@@ -38,6 +38,7 @@ function SignInForm() {
 
   const onSubmitWrapper = async (data: SignInSchemaType) => {
     onSubmit(data, form);
+    console.log('form: ', form.formState);
   };
 
   return (
@@ -135,9 +136,9 @@ function SignInForm() {
         />
 
         <ActionTrigger
-          disabled={form.formState.isSubmitting || !form.formState.isValid}
-          aria-disabled={form.formState.isSubmitting || !form.formState.isValid}
-          isProcessing={form.formState.isSubmitting}
+          disabled={form.formState.isLoading || !form.formState.isValid}
+          aria-disabled={form.formState.isLoading || !form.formState.isValid}
+          isProcessing={form.formState.isLoading}
         >
           <ActionLabel>Sign in</ActionLabel>
         </ActionTrigger>
