@@ -6,7 +6,7 @@ Here's a **Role-Based Access Control (RBAC) Permissions Matrix** for the **Hospi
 
 | **Module**                     | **Super Admin** | **General Manager** | **Finance Manager** | **IT Admin**        | **Department Managers** | **Staff (Reception, Waiters, etc.)** |
 | ------------------------------ | --------------- | ------------------- | ------------------- | ------------------- | ----------------------- | ------------------------------------ |
-| **User Management**            | ✅ Full Access  | ✅ View & Edit      | ❌ No Access        | ✅ Manage Logins    | ✅ Manage Own Dept      | ❌ No Access                         |
+| **staff Management**            | ✅ Full Access  | ✅ View & Edit      | ❌ No Access        | ✅ Manage Logins    | ✅ Manage Own Dept      | ❌ No Access                         |
 | **Roles & Permissions**        | ✅ Full Control | ❌ No Access        | ❌ No Access        | ✅ Technical Access | ❌ No Access            | ❌ No Access                         |
 | **Organization Settings**      | ✅ Full Control | ✅ View Only        | ❌ No Access        | ✅ Manage System    | ❌ No Access            | ❌ No Access                         |
 | **Financial Management**       | ✅ Full Access  | ✅ View Reports     | ✅ Full Access      | ❌ No Access        | ❌ No Access            | ❌ No Access                         |

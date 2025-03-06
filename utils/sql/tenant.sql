@@ -1,4 +1,5 @@
-CREATE TYPE phone_enum AS ENUM ('phone', 'telephone');
+-- Enable required extensions
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Create the ENUM type for services
 CREATE TYPE service_enum AS ENUM (
@@ -7,8 +8,12 @@ CREATE TYPE service_enum AS ENUM (
     'spa',
     'laundry',
     'event_management',
-    'others'
+    'tour_operator',
+    'transport',
+    'other'
 );
+
+CREATE TYPE phone_enum AS ENUM ('phone', 'telephone');
 
 -- Create the ENUM type for social media platforms
 CREATE TYPE social_enum AS ENUM (
@@ -21,30 +26,66 @@ CREATE TYPE social_enum AS ENUM (
     'pinterest'
 );
 
--- Create the tenants table
+-- Create tenants table with security
 CREATE TABLE IF NOT EXISTS tenants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    owner_id UUID NOT NULL REFERENCES users(id)
+    owner_id UUID NOT NULL REFERENCES users(user_id)
     ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+    name VARCHAR(255) NOT NULL CHECK (length(name) >= 2),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Create the services table
+-- Auto-update trigger
+CREATE TRIGGER tenants_updated BEFORE
+UPDATE
+    ON tenants FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
+
+-- RLS Policies for Tenants
+ALTER TABLE
+    tenants ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Tenants public read"
+ON tenants FOR
+SELECT
+    USING (true);
+
+CREATE POLICY "Users can create tenants"
+ON tenants FOR
+INSERT
+    WITH CHECK (owner_id = auth.uid());
+
+CREATE POLICY "Owners manage tenants"
+ON tenants FOR ALL
+USING (owner_id = auth.uid());
+
+-- services table
 CREATE TABLE IF NOT EXISTS services (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id)
     ON DELETE CASCADE,
-    primary_service BOOLEAN NOT NULL DEFAULT FALSE,
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
     service service_enum NOT NULL DEFAULT 'hotel',
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    -- Ensure only one primary service per tenant
-    UNIQUE (tenant_id)
-    WHERE
-        (primary_service = TRUE)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE UNIQUE INDEX unique_tenant_primary_service ON services (tenant_id) 
+WHERE is_primary = true;
+
+-- Auto-update trigger
+CREATE TRIGGER tenants_updated BEFORE
+UPDATE
+    ON services FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
+
+-- Services RLS Policies
+ALTER TABLE
+    services ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Services public read"
+ON services FOR
+SELECT
+    USING (true);
 
 -- Create the tenant_contact table
 CREATE TABLE IF NOT EXISTS tenant_contact (
@@ -55,8 +96,12 @@ CREATE TABLE IF NOT EXISTS tenant_contact (
     type phone_enum NOT NULL DEFAULT 'phone',
     phone VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() CONSTRAINT unique_tenant_phone UNIQUE (tenant_id, phone, type)
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_tenant_phone UNIQUE (tenant_id, phone, type)
 );
+
+-- Contact RLS Policies
+ALTER TABLE tenant_contact ENABLE ROW LEVEL SECURITY;
 
 -- Create the tenant_address table
 CREATE TABLE IF NOT EXISTS tenant_address (
@@ -71,6 +116,10 @@ CREATE TABLE IF NOT EXISTS tenant_address (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_tenant_address UNIQUE (tenant_id, country, state, city)
 );
+
+
+-- Address RLS Policies
+ALTER TABLE tenant_address ENABLE ROW LEVEL SECURITY;
 
 -- Create the tenant_biometrics table
 CREATE TABLE IF NOT EXISTS tenant_biometrics (
@@ -113,7 +162,7 @@ CREATE TABLE IF NOT EXISTS staffs(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id)
     ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users(id)
+    user_id UUID NOT NULL REFERENCES users(user_id)
     ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

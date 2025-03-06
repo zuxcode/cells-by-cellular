@@ -1,15 +1,23 @@
 CREATE TYPE action_enum AS ENUM (
-    -- Added for consistency with CRUD
     'create',
     'read',
     'update',
-    'delete'
+    'delete',
+    'manage'
 );
 
 CREATE TABLE IF NOT EXISTS roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(30) UNIQUE NOT NULL,
-    description VARCHAR(100)
+    name role_enum NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    weight INT NOT NULL CHECK (
+        weight BETWEEN 1
+        AND 10
+    ),
+    parent_id UUID REFERENCES roles(id)
+    ON DELETE
+    SET
+        NULL
 );
 
 CREATE TABLE IF NOT EXISTS operations (
@@ -24,123 +32,64 @@ CREATE TABLE IF NOT EXISTS resources (
 
 CREATE TABLE IF NOT EXISTS permissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    operation_id UUID NOT NULL REFERENCES operations(id)
-    ON DELETE CASCADE,
-    resource_id UUID NOT NULL REFERENCES resources(id)
-    ON DELETE CASCADE,
-    UNIQUE (operation_id, resource_id)
+    operation_id UUID NOT NULL REFERENCES operations(id),
+    resource_id UUID NOT NULL REFERENCES resources(id),
+    -- owned_by role_enum REFERENCES roles(name),
+    CONSTRAINT unique_permission UNIQUE (resource_id, operation_id)
 );
 
-CREATE TABLE role_permissions (
-    role_id UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    permission_id UUID REFERENCES permissions(id)
-    ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role_id UUID NOT NULL REFERENCES roles(id),
+    permission_id UUID NOT NULL REFERENCES permissions(id),
     PRIMARY KEY (role_id, permission_id)
 );
 
-CREATE TABLE user_roles (
-    staff_id UUID REFERENCES Staffs(id)
-    ON DELETE CASCADE,
-    role_id UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    PRIMARY KEY (staff_id, role_id)
+-- Staff-Role assignment with temporal support
+CREATE TABLE IF NOT EXISTS staff_roles (
+    staff_id UUID NOT NULL REFERENCES staffs(id) ON DELETE CASCADE,
+    role_id UUID NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    assigned_by UUID NOT NULL REFERENCES staffs(id),
+    -- 
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    -- 
+    assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    valid_until TIMESTAMPTZ,
+    PRIMARY KEY (staff_id, role_id, tenant_id)
 );
 
-CREATE TABLE role_hierarchy (
-    ancestor_role_id UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    descendant_role_id UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    depth INT CHECK (depth >= 0),
-    PRIMARY KEY (ancestor_role_id, descendant_role_id)
-);
+-- Indexes for performance
+CREATE INDEX idx_role_weight
+ON roles(weight);
 
-CREATE TABLE role_conflicts (
-    role_id_1 UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    role_id_2 UUID REFERENCES roles(id)
-    ON DELETE CASCADE,
-    PRIMARY KEY (role_id_1, role_id_2),
-    CHECK (role_id_1 < role_id_2)
-);
+CREATE INDEX idx_permission_resource
+ON permissions(resource_id);
 
-CREATE INDEX idx_role_permissions
-ON role_permissions(role_id);
+CREATE INDEX idx_staff_role_temporal
+ON staff_roles(staff_id, valid_until);
 
-CREATE INDEX idx_user_roles
-ON user_roles(user_id);
+-- RLS Policies
+ALTER TABLE
+    roles ENABLE ROW LEVEL SECURITY;
 
-CREATE INDEX idx_permissions_operation_resource
-ON permissions(operation_id, resource_id);
+ALTER TABLE
+    permissions ENABLE ROW LEVEL SECURITY;
 
-CREATE INDEX idx_role_hierarchy_descendant
-ON role_hierarchy(descendant_role_id);
+ALTER TABLE
+    role_permissions ENABLE ROW LEVEL SECURITY;
 
-CREATE
-OR REPLACE FUNCTION check_role_hierarchy_cycle() RETURNS TRIGGER AS $$ BEGIN IF EXISTS (
-    SELECT
-        1
-    FROM role_hierarchy
-    WHERE
-        descendant_role_id = NEW.ancestor_role_id
-        AND ancestor_role_id = NEW.descendant_role_id
-)
-    THEN RAISE EXCEPTION 'Cycle detected in role hierarchy';
+ALTER TABLE
+    staff_roles ENABLE ROW LEVEL SECURITY;
 
-END IF;
-
-RETURN NEW;
-
-END;
-
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_role_hierarchy_cycle BEFORE
+-- RLS Policies 
+CREATE POLICY "Permissions INSERT by admins"
+ON roles FOR
 INSERT
-    OR
-UPDATE
-    ON role_hierarchy FOR EACH ROW EXECUTE FUNCTION check_role_hierarchy_cycle();
-
-CREATE
-OR REPLACE FUNCTION check_role_conflict() RETURNS TRIGGER AS $$ BEGIN IF EXISTS (
-    SELECT
-        1
-    FROM role_conflicts
-    WHERE
+    WITH CHECK (
         (
-            role_id_1 = NEW.role_id
-            AND role_id_2 IN (
-                SELECT
-                    role_id
-                FROM user_roles
-                WHERE
-                    user_id = NEW.user_id
-            )
+            SELECT
+                1
+            FROM tenants
+            WHERE
+                owner_id = auth.uid()
         )
-        OR (
-            role_id_2 = NEW.role_id
-            AND role_id_1 IN (
-                SELECT
-                    role_id
-                FROM user_roles
-                WHERE
-                    user_id = NEW.user_id
-            )
-        )
-)
-    THEN RAISE EXCEPTION 'Role conflict detected';
-
-END IF;
-
-RETURN NEW;
-
-END;
-
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_user_roles_conflict BEFORE
-INSERT
-    OR
-UPDATE
-    ON user_roles FOR EACH ROW EXECUTE FUNCTION check_role_conflict();
+    );
