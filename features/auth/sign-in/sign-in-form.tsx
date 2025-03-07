@@ -122,7 +122,7 @@ function SignInForm() {
               <Link
                 aria-label="Forgot password?"
                 passHref
-                href="/account/forgot-password"
+                href="/dashboard/forgot-password"
               >
                 <Button
                   variant="link"

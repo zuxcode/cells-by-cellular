@@ -39,7 +39,6 @@ function SignUpForm() {
   const onSubmitWrapper = async (data: SignUpSchemaType) => {
     onSubmit(data, form);
   };
-  console.log("isLoading: ",isLoading);
 
   return (
     <Form {...form}>
@@ -121,6 +120,7 @@ function SignUpForm() {
           disabled={isLoading || !form.formState.isValid}
           aria-disabled={isLoading || !form.formState.isValid}
           isProcessing={isLoading}
+          
         >
           <ActionLabel>Sign up</ActionLabel>
         </ActionTrigger>

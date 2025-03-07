@@ -1,27 +1,15 @@
 "use server";
 
+import { headers } from "next/headers";
+import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { SeverResponse } from "@/types/global-type";
 import {
   SignUpSchemaType,
   signUpSchema,
 } from "@/features/auth/schemas/auth-schema";
-import { z } from "zod";
-import { headers } from "next/headers";
-import { c, S } from "framer-motion/dist/types.d-6pKw1mTI";
-import { User } from "@supabase/supabase-js";
-// import { logger } from "@/utils/logger";
+import { createAdminClient } from "@/utils/supabase/server-admin";
 
-// Define a more robust response type
-type SignUpResponse = {
-  status: "success" | "error";
-  message: string;
-  fieldErrors?: z.typeToFlattenedError<SignUpSchemaType>["fieldErrors"];
-};
-
-/**
- * Transforms raw form data into a structured object with proper types.
- */
 const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   return {
@@ -29,9 +17,6 @@ const transformFormData = (formData: FormData) => {
   };
 };
 
-/**
- * Validates form data against the sign-up schema.
- */
 const validateFormData = (data: unknown) => {
   const result = signUpSchema.safeParse(data);
   if (!result.success) {
@@ -45,32 +30,30 @@ const validateFormData = (data: unknown) => {
 };
 
 /**
- * Handles the tenant creation process with Supabase.
+ * Atomic tenant creation using PostgreSQL transaction
  */
-const createUserExtensionWithSupabase = async ({
+const createTenant = async ({
   fullName,
   id,
 }: Pick<SignUpSchemaType, "fullName"> & User) => {
   const supabase = await createClient();
-  const [firstName, lastName] = fullName.split(" ");
-  const { error } = await supabase.from("users").insert([
-    {
-      first_name: firstName,
-      last_name: lastName,
-      user_id: id,
-    },
-  ]);
+  const [firstName] = fullName.split(" ");
+  const tenantName = `${firstName}'s Organization`;
+
+  const { error } = await supabase.rpc("create_tenant_and_related", {
+    p_user_id: id,
+    p_first_name: firstName,
+    p_last_name: fullName.split(" ").slice(1).join(" ") || "", // Handle multi-word last names
+    p_tenant_name: tenantName,
+  });
 
   if (error) {
-    console.log("error: ", error);
-    // logger.error("Supabase sign-up error:", error.message); // Structured logging
-    throw new Error(error.message);
+    const supabaseAdmin = await createAdminClient();
+    await supabaseAdmin.auth.admin.deleteUser(id);
+    throw new Error("Failed to create account and related data");
   }
 };
 
-/**
- * Handles the sign-up process with Supabase.
- */
 const signUpWithSupabase = async ({
   email,
   password,
@@ -86,29 +69,18 @@ const signUpWithSupabase = async ({
     },
   });
 
-  if (error) {
-    // logger.error("Supabase sign-up error:", error.message); // Structured logging
-    throw new Error(error.message);
+  if (error || !data.user) {
+    throw new Error("Failed to create account");
   }
 
-  if (!data.user) {
-    throw new Error("No user record found");
-  }
-
-  createUserExtensionWithSupabase({
-    fullName,
-    ...data.user,
-  });
+  // Ensure we await the tenant creation
+  await createTenant({ fullName, ...data.user });
 };
 
-/**
- * Server action for handling user sign-up.
- */
 export const signUpAction = async (
   formData: FormData
-): Promise<SignUpResponse> => {
+): Promise<SeverResponse<SignUpSchemaType>> => {
   try {
-    // Transform and validate form data
     const transformedData = transformFormData(formData);
     const validationResult = validateFormData(transformedData);
 
@@ -116,15 +88,12 @@ export const signUpAction = async (
       return validationResult;
     }
 
-    // Attempt sign-up with Supabase
     await signUpWithSupabase(validationResult);
     return {
       status: "success",
-      message: "Sign up successful",
+      message: "Account created successfully.",
     };
   } catch (error) {
-    // logger.error("Sign-up error:", error); // Structured logging
-
     return {
       status: "error",
       message:
@@ -133,6 +102,4 @@ export const signUpAction = async (
           : "An unexpected error occurred. Please try again later.",
     };
   }
-  // Redirect on successful sign-up
-  // redirect("/dashboard");
 };
