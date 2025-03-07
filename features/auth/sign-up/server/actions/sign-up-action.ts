@@ -29,6 +29,21 @@ const validateFormData = (data: unknown) => {
   return result.data;
 };
 
+// Utility function for proper name parsing
+const parseFullName = (fullName: string) => {
+  const names = fullName.trim().split(/\s+/).filter(Boolean);
+
+  if (names.length < 2) {
+    throw new Error("Full name must contain at least first and last name");
+  }
+
+  return {
+    firstName: names[0],
+    middleName: names.slice(1, -1).join(" ") || "",
+    lastName: names[names.length - 1],
+  };
+};
+
 /**
  * Atomic tenant creation using PostgreSQL transaction
  */
@@ -36,21 +51,33 @@ const createTenant = async ({
   fullName,
   id,
 }: Pick<SignUpSchemaType, "fullName"> & User) => {
-  const supabase = await createClient();
-  const [firstName] = fullName.split(" ");
-  const tenantName = `${firstName}'s Organization`;
+  try {
+    const supabase = await createClient();
+    const { firstName, middleName, lastName } = parseFullName(fullName);
+    const tenantName = `${firstName}'s Organization`;
+    const { error } = await supabase.rpc("create_tenant_and_related", {
+      p_user_id: id,
+      p_first_name: firstName,
+      p_middle_name: middleName,
+      p_last_name: lastName,
+      p_tenant_name: tenantName,
+    });
 
-  const { error } = await supabase.rpc("create_tenant_and_related", {
-    p_user_id: id,
-    p_first_name: firstName,
-    p_last_name: fullName.split(" ").slice(1).join(" ") || "", // Handle multi-word last names
-    p_tenant_name: tenantName,
-  });
-
-  if (error) {
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
     const supabaseAdmin = await createAdminClient();
     await supabaseAdmin.auth.admin.deleteUser(id);
-    throw new Error("Failed to create account and related data");
+
+    const message =
+      error instanceof Error
+        ? error.message.includes("Super Admin role")
+          ? "System configuration error - please contact support"
+          : `Account setup failed: ${error.message}`
+        : "Failed to create organization";
+
+    throw new Error(message);
   }
 };
 
@@ -66,14 +93,18 @@ const signUpWithSupabase = async ({
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        signup_status: "pending_tenant",
+      },
     },
   });
 
   if (error || !data.user) {
-    throw new Error("Failed to create account");
+    throw new Error(
+      error?.message || "Failed to create authentication account"
+    );
   }
 
-  // Ensure we await the tenant creation
   await createTenant({ fullName, ...data.user });
 };
 
@@ -91,7 +122,8 @@ export const signUpAction = async (
     await signUpWithSupabase(validationResult);
     return {
       status: "success",
-      message: "Account created successfully.",
+      message:
+        "Account created successfully. Please check your email to confirm.",
     };
   } catch (error) {
     return {
