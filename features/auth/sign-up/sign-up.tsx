@@ -25,8 +25,9 @@ import { useSignUp } from "./hooks/use-sign-up";
 
 function SignUpForm() {
   const { buttonProps, inputType, isVisible, toggle } = usePasswordVisibility();
-  const { onSubmit } = useSignUp();
+  const { onSubmit, isLoading } = useSignUp();
   const form = useForm<SignUpSchemaType>({
+    mode: 'all',
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       fullName: "",
@@ -38,7 +39,7 @@ function SignUpForm() {
   const onSubmitWrapper = async (data: SignUpSchemaType) => {
     onSubmit(data, form);
   };
-  console.log("form: ", form.formState.isValid);
+  console.log("isLoading: ",isLoading);
 
   return (
     <Form {...form}>
@@ -54,13 +55,11 @@ function SignUpForm() {
               <FormLabel>Fullname</FormLabel>
               <FormControl>
                 <Input
-                  type="text"
-                  id="Fullname"
                   autoComplete="family-name"
                   aria-label="Enter your fullname"
                   placeholder="Enter your fullname"
-                  disabled={form.formState.isSubmitting}
-                  aria-disabled={form.formState.isSubmitting}
+                  disabled={isLoading}
+                  aria-disabled={isLoading}
                   {...field}
                 />
               </FormControl>
@@ -77,12 +76,11 @@ function SignUpForm() {
               <FormControl>
                 <Input
                   type="email"
-                  id="email"
                   autoComplete="email"
                   aria-label="Enter your email"
                   placeholder="Enter your email"
-                  disabled={form.formState.isSubmitting}
-                  aria-disabled={form.formState.isSubmitting}
+                  disabled={isLoading}
+                  aria-disabled={isLoading}
                   {...field}
                 />
               </FormControl>
@@ -100,12 +98,11 @@ function SignUpForm() {
                 <div className="relative">
                   <Input
                     type={inputType}
-                    id="password"
                     autoComplete="password"
                     aria-label="Enter your password"
                     placeholder="Enter your password"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={isLoading}
+                    aria-disabled={isLoading}
                     {...field}
                   />
 
@@ -121,9 +118,9 @@ function SignUpForm() {
           )}
         />
         <ActionTrigger
-          disabled={form.formState.isSubmitting || !form.formState.isValid}
-          aria-disabled={form.formState.isSubmitting || form.formState.isValid}
-          isProcessing={form.formState.isSubmitting}
+          disabled={isLoading || !form.formState.isValid}
+          aria-disabled={isLoading || !form.formState.isValid}
+          isProcessing={isLoading}
         >
           <ActionLabel>Sign up</ActionLabel>
         </ActionTrigger>

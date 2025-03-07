@@ -2,7 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { SignUpSchemaType } from "../../schemas/auth-schema";
 import { signUpAction } from "../server/actions/sign-up-action";
 import toast from "react-hot-toast";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 type OnSubmitHandler = (
   data: SignUpSchemaType,
@@ -11,6 +11,7 @@ type OnSubmitHandler = (
 
 type UseSignInReturn = {
   onSubmit: OnSubmitHandler;
+  isLoading: boolean;
 };
 
 /**
@@ -18,7 +19,9 @@ type UseSignInReturn = {
  * @returns An object containing the `onSubmit` handler and a loading state.
  */
 const useSignUp = (): UseSignInReturn => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
+    setIsLoading(true);
     const formData = new FormData();
 
     // Append form data to FormData object
@@ -63,10 +66,12 @@ const useSignUp = (): UseSignInReturn => {
           ? error.message
           : "An unexpected error occurred. Please try again."
       );
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  return { onSubmit };
+  return { onSubmit, isLoading };
 };
 
 export { useSignUp };

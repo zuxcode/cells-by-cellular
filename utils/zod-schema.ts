@@ -21,6 +21,7 @@ function isValidPhoneNumber(number: string): boolean {
 const basePasswordSchema = z
   .string()
   .trim()
+  .nonempty("Password is required")
   .min(8, "Password must be at least 8 characters")
   .max(64, "Password cannot exceed 64 characters")
   .superRefine((password, ctx) => {
@@ -89,26 +90,31 @@ const addressSchema = z
 const contactLocationSchema = z.object({
   city: z
     .string()
+    .nonempty("City is required")
     .min(2, "City must be at least 2 characters")
     .max(50, "City cannot exceed 50 characters"),
   state: z
     .string()
+    .nonempty("State is required")
     .min(2, "State must be at least 2 characters")
     .max(50, "State cannot exceed 50 characters"),
   email: z
     .string()
+    .nonempty("Email is required")
     .email("Please enter a valid email address")
     .max(100, "Email cannot exceed 100 characters"),
   phoneNumber: phoneNumberSchema,
   country: z
     .string()
+    .nonempty("Country is required")
     .min(2, "Country must be at least 2 characters")
     .max(50, "Country cannot exceed 50 characters"),
   // Local Government Area
   LGA: z
     .string()
-    .min(2, "Country must be at least 2 characters")
-    .max(50, "Country cannot exceed 50 characters"),
+    .nonempty("Local government area is required")
+    .min(2, "Local government area must be at least 2 characters")
+    .max(50, "Local government area cannot exceed 50 characters"),
 });
 
 const socialMediaSchema = contactLocationSchema.extend({
@@ -125,6 +131,7 @@ const socialMediaSchema = contactLocationSchema.extend({
 const userBaseSchema = contactLocationSchema.extend({
   firstName: z
     .string()
+    .nonempty("First name is required")
     .trim()
     .min(2, "First name must be at least 2 characters")
     .max(50, "First name cannot exceed 50 characters")
@@ -135,6 +142,7 @@ const userBaseSchema = contactLocationSchema.extend({
 
   lastName: z
     .string()
+    .nonempty("Last name is required")
     .trim()
     .min(2, "Last name must be at least 2 characters")
     .max(50, "Last name cannot exceed 50 characters")
@@ -145,6 +153,7 @@ const userBaseSchema = contactLocationSchema.extend({
 
   middleName: z
     .string()
+    .nonempty("Middle name is required")
     .trim()
     .max(50, "Middle name cannot exceed 50 characters")
     .regex(

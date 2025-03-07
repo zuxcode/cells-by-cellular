@@ -6,7 +6,7 @@
     "start": "next start",
     "lint": "next lint",
     "tsx": "bunx tsc --noEmit",
-    "db:type": "bunx supabase gen types typescript --project-id tnmuybjxosdtfjoumuav > utils/supabase/db-type.ts"
+    "db:type": "bunx supabase gen types typescript --project-id gosenjrmkbnmwpxxishw > utils/supabase/db-type.ts"
   },
   "dependencies": {
     "": ".",

@@ -7,6 +7,9 @@ import {
   signUpSchema,
 } from "@/features/auth/schemas/auth-schema";
 import { z } from "zod";
+import { headers } from "next/headers";
+import { c, S } from "framer-motion/dist/types.d-6pKw1mTI";
+import { User } from "@supabase/supabase-js";
 // import { logger } from "@/utils/logger";
 
 // Define a more robust response type
@@ -42,11 +45,40 @@ const validateFormData = (data: unknown) => {
 };
 
 /**
+ * Handles the tenant creation process with Supabase.
+ */
+const createUserExtensionWithSupabase = async ({
+  fullName,
+  id,
+}: Pick<SignUpSchemaType, "fullName"> & User) => {
+  const supabase = await createClient();
+  const [firstName, lastName] = fullName.split(" ");
+  const { error } = await supabase.from("users").insert([
+    {
+      first_name: firstName,
+      last_name: lastName,
+      user_id: id,
+    },
+  ]);
+
+  if (error) {
+    console.log("error: ", error);
+    // logger.error("Supabase sign-up error:", error.message); // Structured logging
+    throw new Error(error.message);
+  }
+};
+
+/**
  * Handles the sign-up process with Supabase.
  */
-const signUpWithSupabase = async (email: string, password: string) => {
+const signUpWithSupabase = async ({
+  email,
+  password,
+  fullName,
+}: SignUpSchemaType) => {
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const origin = (await headers()).get("origin");
+  const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -58,6 +90,15 @@ const signUpWithSupabase = async (email: string, password: string) => {
     // logger.error("Supabase sign-up error:", error.message); // Structured logging
     throw new Error(error.message);
   }
+
+  if (!data.user) {
+    throw new Error("No user record found");
+  }
+
+  createUserExtensionWithSupabase({
+    fullName,
+    ...data.user,
+  });
 };
 
 /**
@@ -76,10 +117,11 @@ export const signUpAction = async (
     }
 
     // Attempt sign-up with Supabase
-    await signUpWithSupabase(validationResult.email, validationResult.password);
-
-    // Redirect on successful sign-up
-    redirect("/dashboard");
+    await signUpWithSupabase(validationResult);
+    return {
+      status: "success",
+      message: "Sign up successful",
+    };
   } catch (error) {
     // logger.error("Sign-up error:", error); // Structured logging
 
@@ -91,4 +133,6 @@ export const signUpAction = async (
           : "An unexpected error occurred. Please try again later.",
     };
   }
+  // Redirect on successful sign-up
+  // redirect("/dashboard");
 };

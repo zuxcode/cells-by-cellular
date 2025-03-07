@@ -15,20 +15,22 @@ VALUES
     ('Security & Access Control'),
     ('Marketing & Promotions');
 
-INSERT INTO roles (name, description)
+INSERT INTO roles (name, description, weight)
 VALUES
-    ('Super Admin', 'Full system access'),
+    ('Super Admin', 'Full system access', 10),
     (
         'General Manager',
-        'Organization-wide oversight'
+        'Organization-wide oversight',
+        9
     ),
-    ('Finance Manager', 'Financial operations'),
-    ('IT Admin', 'Technical management'),
+    ('Finance Manager', 'Financial operations', 5),
+    ('IT Admin', 'Technical management' 7),
     (
         'Department Managers',
-        'Department-specific control'
+        'Department-specific control',
+        8
     ),
-    ('Staff', 'Frontline operations');
+    ('Staff', 'Frontline operations', 1);
 
 INSERT INTO operations (action)
 VALUES

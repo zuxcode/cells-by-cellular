@@ -9,9 +9,9 @@ export default async function Signup() {
     <div>
       <div className="flex flex-col gap-2">
         <h3 className="text-2xl text-foreground font-bold">
-          Welcome Back to Dove
+          Welcome to Dove
         </h3>
-        <p className="text-sm">Sign in your account</p>
+        <p className="text-sm">Sign up your account</p>
       </div>
       <div className="flex flex-col gap-5">
         <SignUpForm />

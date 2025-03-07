@@ -6,6 +6,15 @@ CREATE TYPE action_enum AS ENUM (
     'manage'
 );
 
+CREATE TYPE role_enum AS ENUM (
+    'Super Admin',
+    'General Manager',
+    'Finance Manager',
+    'IT Admin',
+    'Department Managers',
+    'Staff'
+);
+
 CREATE TABLE IF NOT EXISTS roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name role_enum NOT NULL,
@@ -48,10 +57,8 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 CREATE TABLE IF NOT EXISTS staff_roles (
     staff_id UUID NOT NULL REFERENCES staffs(id) ON DELETE CASCADE,
     role_id UUID NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
-    assigned_by UUID NOT NULL REFERENCES staffs(id),
-    -- 
+    assigned_by UUID NOT NULL REFERENCES staffs(id) ON DELETE SET NULL,
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    -- 
     assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     valid_until TIMESTAMPTZ,
     PRIMARY KEY (staff_id, role_id, tenant_id)
@@ -81,11 +88,11 @@ ALTER TABLE
     staff_roles ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies 
-CREATE POLICY "Permissions INSERT by admins"
+CREATE POLICY "Permissions ALL to Super Admin"
 ON roles FOR
 INSERT
     WITH CHECK (
-        (
+       EXISTS (
             SELECT
                 1
             FROM tenants
