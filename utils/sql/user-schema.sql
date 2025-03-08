@@ -22,7 +22,7 @@ UPDATE
 
 -- Create the user_biometrics table
 CREATE TABLE IF NOT EXISTS user_biometrics (
-     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(user_id)
     ON DELETE CASCADE,
     gender gender_enum,
@@ -37,8 +37,8 @@ CREATE TRIGGER biometrics_updated BEFORE
 UPDATE
     ON user_biometrics FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
 
--- Create the normalized contacts table (1:N relationship)
-CREATE TABLE IF NOT EXISTS contacts (
+-- Create the normalized user contacts table (1:N relationship)
+CREATE TABLE IF NOT EXISTS user_contacts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(user_id)
     ON DELETE CASCADE,
@@ -50,14 +50,14 @@ CREATE TABLE IF NOT EXISTS contacts (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Auto-update trigger for contacts
-CREATE TRIGGER contacts_updated BEFORE
+-- Auto-update trigger for user contacts
+CREATE TRIGGER user_contacts_updated BEFORE
 UPDATE
-    ON contacts FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
+    ON user_contacts FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
 
--- Create the addresses table (1:N relationship)
-CREATE TABLE IF NOT EXISTS addresses (
-     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+-- Create the user_addresses table (1:N relationship)
+CREATE TABLE IF NOT EXISTS user_addresses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(user_id)
     ON DELETE CASCADE,
     country VARCHAR(150) NOT NULL,
@@ -71,76 +71,113 @@ CREATE TABLE IF NOT EXISTS addresses (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Auto-update trigger for addresses
-CREATE TRIGGER addresses_updated BEFORE
+-- Auto-update trigger for user_addresses
+CREATE TRIGGER user_addresses_updated BEFORE
 UPDATE
-    ON addresses FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
+    ON user_addresses FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
 
 -- Create indexes for frequently queried fields
-CREATE INDEX idx_contacts_user
-ON contacts(user_id);
+CREATE INDEX idx_users
+ON users(user_id);
 
-CREATE INDEX idx_addresses_user
-ON addresses(user_id);
+CREATE INDEX idx_user_contacts_user
+ON user_contacts(user_id);
+
+CREATE INDEX idx_user_addresses_user
+ON user_addresses(user_id);
 
 CREATE INDEX idx_biometrics_user
 ON user_biometrics(user_id);
 
-
 -- Enable RLS on all tables
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_biometrics ENABLE ROW LEVEL SECURITY;
-ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE addresses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE
+    users ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    user_biometrics ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    user_contacts ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    user_addresses ENABLE ROW LEVEL SECURITY;
 
 -- Users Table Policies
-CREATE POLICY "Public user profiles are viewable" ON users 
-FOR SELECT USING (true);
+CREATE POLICY "Public user profiles are viewable"
+ON users FOR
+SELECT
+    USING (true);
 
-CREATE POLICY "Anyone can create a profile" ON users 
-FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anyone can create a profile"
+ON users FOR
+INSERT
+    WITH CHECK (true);
 
-CREATE POLICY "Users can update own profile" ON users 
-FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "Users can update own profile"
+ON users FOR
+UPDATE
+    USING (user_id = auth.uid());
 
-CREATE POLICY "Users can delete own profile" ON users 
-FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY "Users can delete own profile"
+ON users FOR DELETE
+USING (user_id = auth.uid());
 
 -- User Biometrics Table Policies
-CREATE POLICY "Biometrics are public" ON user_biometrics 
-FOR SELECT USING (true);
+CREATE POLICY "Biometrics are public"
+ON user_biometrics FOR
+SELECT
+    USING (true);
 
-CREATE POLICY "Anyone can add biometrics" ON user_biometrics 
-FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can insert their own biometrics"
+ON user_biometrics FOR
+INSERT
+    WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Users can update own biometrics" ON user_biometrics 
-FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "Users can update own biometrics"
+ON user_biometrics FOR
+UPDATE
+    USING (user_id = auth.uid());
 
-CREATE POLICY "Users can delete own biometrics" ON user_biometrics 
-FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY "Users can delete own biometrics"
+ON user_biometrics FOR DELETE
+USING (user_id = auth.uid());
 
--- Contacts Table Policies
-CREATE POLICY "Contacts are public" ON contacts 
-FOR SELECT USING (true);
+-- user_contacts Table Policies
+CREATE POLICY "user_contacts are public"
+ON user_contacts FOR
+SELECT
+    USING (true);
 
-CREATE POLICY "Anyone can add contacts" ON contacts 
-FOR INSERT WITH CHECK (true);
+CREATE POLICY "users can insert their own user_contacts"
+ON user_contacts FOR
+INSERT
+    WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Users can update own contacts" ON contacts 
-FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "Users can update own user_contacts"
+ON user_contacts FOR
+UPDATE
+    USING (user_id = auth.uid());
 
-CREATE POLICY "Users can delete own contacts" ON contacts 
-FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY "Users can delete own user_contacts"
+ON user_contacts FOR DELETE
+USING (user_id = auth.uid());
 
--- Addresses Table Policies
-CREATE POLICY "Addresses are public" ON addresses 
-FOR SELECT USING (true);
+-- user_addresses Table Policies
+CREATE POLICY "user_addresses are public"
+ON user_addresses FOR
+SELECT
+    USING (true);
 
-CREATE POLICY "Anyone can add addresses" ON addresses 
-FOR INSERT WITH CHECK (true);
+CREATE POLICY "users can add their own user_addresses"
+ON user_addresses FOR
+INSERT
+    WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Users can update own addresses" ON addresses 
-FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "Users can update own user_addresses"
+ON user_addresses FOR
+UPDATE
+    USING (user_id = auth.uid());
 
-CREATE POLICY "Users can delete own addresses" ON addresses 
-FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY "Users can delete own user_addresses"
+ON user_addresses FOR DELETE
+USING (user_id = auth.uid());

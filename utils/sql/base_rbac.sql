@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS base_roles (
 
 ALTER TABLE base_roles ENABLE ROW LEVEL SECURITY;
 
+
 CREATE POLICY "SELECT Permissions to all tenant"
 ON base_roles FOR
 SELECT
@@ -95,3 +96,18 @@ INSERT
             WHERE owner_id = auth.uid()
         )
     );
+
+
+
+
+-- For permission lookups by action type
+CREATE INDEX idx_permissions_action ON base_permissions(action);
+
+-- For role-permission assignment lookups
+CREATE INDEX idx_role_perms_permission ON base_role_permissions(permission_id);
+
+-- For staff role assignments by tenant
+CREATE INDEX idx_staff_roles_tenant ON base_staff_roles(tenant_id);
+
+-- For staff role assignments by role
+CREATE INDEX idx_staff_roles_role ON base_staff_roles(role_id);
