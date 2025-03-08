@@ -11,10 +11,10 @@ Here's a **Role-Based Access Control (RBAC) Permissions Matrix** for the **Hospi
 | **Organization Settings**      | ✅ Full Control | ✅ View Only        | ❌ No Access        | ✅ Manage System    | ❌ No Access            | ❌ No Access                         |
 | **Financial Management**       | ✅ Full Access  | ✅ View Reports     | ✅ Full Access      | ❌ No Access        | ❌ No Access            | ❌ No Access                         |
 | **Inventory Management**       | ✅ Full Access  | ✅ View Reports     | ✅ View Costs       | ❌ No Access        | ✅ Manage Own Dept      | ❌ No Access                         |
-| **Guest Check-in/Check-out**   | ❌ No Access    | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Perform Check-ins                 |
+| **Guest Check-in/Check-out**   | ✅ Full Access    | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Perform Check-ins                 |
 | **Room & Booking Management**  | ✅ Full Access  | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Handle Bookings                   |
-| **Restaurant Orders**          | ✅ View Reports | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Take Orders                       |
-| **Kitchen & Food Prep**        | ❌ No Access    | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Prepare Food                      |
+| **Restaurant Orders**          | ✅ Full Access | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Take Orders                       |
+| **Kitchen & Food Prep**        | ✅ Full Access   | ✅ View Reports     | ❌ No Access        | ❌ No Access        | ✅ Manage Staff         | ✅ Prepare Food                      |
 | **Event & Banquet Management** | ✅ Full Access  | ✅ Manage           | ❌ No Access        | ❌ No Access        | ✅ Manage Own Events    | ✅ Execute Event Tasks               |
 | **Procurement & Suppliers**    | ✅ Full Access  | ✅ View Reports     | ✅ View Reports     | ❌ No Access        | ✅ Request Supplies     | ❌ No Access                         |
 | **HR & Payroll**               | ✅ Full Access  | ✅ View Reports     | ✅ Manage Payroll   | ❌ No Access        | ✅ Manage Staff         | ❌ No Access                         |
