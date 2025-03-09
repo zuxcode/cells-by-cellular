@@ -25,9 +25,10 @@ import { useSignIn } from "./hooks/use-sign-in";
 
 function SignInForm() {
   const { isVisible, toggle, buttonProps, inputType } = usePasswordVisibility();
-  const { onSubmit } = useSignIn();
+  const { onSubmit, isLoading } = useSignIn();
 
   const form = useForm<SignInSchemaType>({
+    mode: 'all',
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
@@ -38,7 +39,6 @@ function SignInForm() {
 
   const onSubmitWrapper = async (data: SignInSchemaType) => {
     onSubmit(data, form);
-    console.log('form: ', form.formState);
   };
 
   return (
@@ -60,8 +60,8 @@ function SignInForm() {
                   autoComplete="email"
                   aria-label="Enter your email"
                   placeholder="Enter your email"
-                  disabled={form.formState.isSubmitting}
-                  aria-disabled={form.formState.isSubmitting}
+                  disabled={isLoading}
+                  aria-disabled={isLoading}
                   {...field}
                 />
               </FormControl>
@@ -84,8 +84,8 @@ function SignInForm() {
                     autoComplete="password"
                     aria-label="Enter your password"
                     placeholder="Enter your password"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={isLoading}
+                    aria-disabled={isLoading}
                     {...field}
                   />
 
@@ -122,7 +122,7 @@ function SignInForm() {
               <Link
                 aria-label="Forgot password?"
                 passHref
-                href="/dashboard/forgot-password"
+                href="/forgot-password"
               >
                 <Button
                   variant="link"
@@ -136,9 +136,9 @@ function SignInForm() {
         />
 
         <ActionTrigger
-          disabled={form.formState.isLoading || !form.formState.isValid}
-          aria-disabled={form.formState.isLoading || !form.formState.isValid}
-          isProcessing={form.formState.isLoading}
+          disabled={isLoading || !form.formState.isValid}
+          aria-disabled={isLoading || !form.formState.isValid}
+          isProcessing={isLoading}
         >
           <ActionLabel>Sign in</ActionLabel>
         </ActionTrigger>

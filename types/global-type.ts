@@ -7,12 +7,11 @@ export type Element<T extends React.ElementType = "div"> =
   };
 
 // Define a more robust response type
-export type SeverResponse<T = {}> = {
+export type ServerResponse<T = {}> = {
   status: "success" | "error";
   message: string;
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
-
 
 // type roomStatus = Database["public"]["Enums"]["room_status_enum"];
 // type bedType = Database["public"]["Enums"]["bed_type_enum"];

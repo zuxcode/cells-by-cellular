@@ -1,6 +1,6 @@
 "use server";
 
-import { SeverResponse } from "@/types/global-type";
+import { ServerResponse } from "@/types/global-type";
 import { createClient } from "@/utils/supabase/server";
 import { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
@@ -10,9 +10,9 @@ import { redirect } from "next/navigation";
 /**
  * Handles OAuth sign-in for a given provider.
  * @param provider - The OAuth provider (e.g., "google", "facebook").
- * @returns A `SeverResponse` object or redirects to the dashboard on success.
+ * @returns A `ServerResponse` object or redirects to the dashboard on success.
  */
-async function handleOAuthSignIn(provider: Provider): Promise<SeverResponse> {
+async function handleOAuthSignIn(provider: Provider): Promise<ServerResponse> {
   const origin = (await headers()).get("origin");
   const supabase = await createClient();
 
@@ -50,16 +50,16 @@ async function handleOAuthSignIn(provider: Provider): Promise<SeverResponse> {
 
 /**
  * Handles Google OAuth sign-in.
- * @returns A `SeverResponse` object // "google" | "facebook" or redirects to the dashboard on success.
+ * @returns A `ServerResponse` object // "google" | "facebook" or redirects to the dashboard on success.
  */
-export async function signinWithGoogle(): Promise<SeverResponse> {
+export async function signinWithGoogle(): Promise<ServerResponse> {
   return handleOAuthSignIn("google");
 }
 
 /**
  * Handles Facebook OAuth sign-in.
- * @returns A `SeverResponse` object or redirects to the dashboard on success.
+ * @returns A `ServerResponse` object or redirects to the dashboard on success.
  */
-export async function signinWithFacebook(): Promise<SeverResponse> {
+export async function signinWithFacebook(): Promise<ServerResponse> {
   return handleOAuthSignIn("facebook");
 }

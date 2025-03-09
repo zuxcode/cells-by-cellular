@@ -9,13 +9,13 @@ import {
   OAuthProviderLabel,
 } from "@/features/auth/components/ui/o-auth-button-group";
 import toast from "react-hot-toast";
-import { SeverResponse } from "@/types/global-type";
+import { ServerResponse } from "@/types/global-type";
 
 interface OAuthButtonProps {
   label: string;
   iconSrc: string;
   iconAlt: string;
-  formAction?: () => Promise<SeverResponse>;
+  formAction?: () => Promise<ServerResponse>;
 }
 
 function OAuthButton({

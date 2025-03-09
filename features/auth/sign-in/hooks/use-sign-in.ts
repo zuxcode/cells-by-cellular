@@ -2,7 +2,8 @@ import { UseFormReturn } from "react-hook-form";
 import { SignInSchemaType } from "../../schemas/auth-schema";
 import { signInAction } from "../server/actions/sign-in-action";
 import toast from "react-hot-toast";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 type OnSubmitHandler = (
   data: SignInSchemaType,
@@ -11,6 +12,7 @@ type OnSubmitHandler = (
 
 type UseSignInReturn = {
   onSubmit: OnSubmitHandler;
+  isLoading: boolean;
 };
 
 /**
@@ -18,9 +20,12 @@ type UseSignInReturn = {
  * @returns An object containing the `onSubmit` handler.
  */
 const useSignIn = (): UseSignInReturn => {
-  const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
-    const formData = new FormData();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
 
+  const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
+    setIsLoading(true);
+    const formData = new FormData();
     // Append form data to FormData object
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, String(value));
@@ -31,8 +36,9 @@ const useSignIn = (): UseSignInReturn => {
 
       // Handle success
       if (result.status === "success") {
+        toast.success("Signed in successfully!");
+        router.replace("/dashboard");
         form.reset();
-        toast.success("Successfully signed in!");
         return;
       }
 
@@ -57,16 +63,17 @@ const useSignIn = (): UseSignInReturn => {
         toast.error(result.message);
       }
     } catch (error) {
-      console.error("Sign-in error:", error);
       toast.error(
         error instanceof Error
           ? error.message
           : "An unexpected error occurred. Please try again."
       );
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  return { onSubmit };
+  return { onSubmit, isLoading };
 };
 
 export { useSignIn };

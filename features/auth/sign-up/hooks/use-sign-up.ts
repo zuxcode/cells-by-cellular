@@ -3,6 +3,7 @@ import { SignUpSchemaType } from "../../schemas/auth-schema";
 import { signUpAction } from "../server/actions/sign-up-action";
 import toast from "react-hot-toast";
 import React, { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 type OnSubmitHandler = (
   data: SignUpSchemaType,
@@ -20,6 +21,8 @@ type UseSignInReturn = {
  */
 const useSignUp = (): UseSignInReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
+
   const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
     setIsLoading(true);
     const formData = new FormData();
@@ -34,8 +37,9 @@ const useSignUp = (): UseSignInReturn => {
 
       // Handle success
       if (result.status === "success") {
-        form.reset();
         toast.success("Account created successfully!");
+        router.replace("/dashboard");
+        form.reset();
         return;
       }
 
@@ -60,7 +64,6 @@ const useSignUp = (): UseSignInReturn => {
         toast.error(result.message);
       }
     } catch (error) {
-      console.error("Sign-up error:", error);
       toast.error(
         error instanceof Error
           ? error.message

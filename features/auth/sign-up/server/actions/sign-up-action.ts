@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
-import { SeverResponse } from "@/types/global-type";
+import { ServerResponse } from "@/types/global-type";
 import {
   SignUpSchemaType,
   signUpSchema,
@@ -67,7 +67,7 @@ const createTenant = async ({
       throw error;
     }
   } catch (error) {
-    console.log("error: ", error);
+    
     const supabaseAdmin = await createAdminClient();
     await supabaseAdmin.auth.admin.deleteUser(id);
 
@@ -117,7 +117,7 @@ const signUpWithSupabase = async ({
 
 export const signUpAction = async (
   formData: FormData
-): Promise<SeverResponse<SignUpSchemaType>> => {
+): Promise<ServerResponse<SignUpSchemaType>> => {
   try {
     const transformedData = transformFormData(formData);
     const validationResult = validateFormData(transformedData);
