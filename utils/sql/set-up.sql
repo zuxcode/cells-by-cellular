@@ -21,7 +21,7 @@ BEGIN
   RETURNING id INTO v_tenant_id;
 
   -- Add default service
-  INSERT INTO services (tenant_id, service, is_primary)
+  INSERT INTO tenant_services (tenant_id, service, is_primary)
   VALUES (v_tenant_id, 'hotel', true);
 
   -- Create staff profile

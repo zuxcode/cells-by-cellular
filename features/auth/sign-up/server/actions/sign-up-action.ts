@@ -67,17 +67,24 @@ const createTenant = async ({
       throw error;
     }
   } catch (error) {
+    console.log("error: ", error);
     const supabaseAdmin = await createAdminClient();
     await supabaseAdmin.auth.admin.deleteUser(id);
 
-    const message =
-      error instanceof Error
-        ? error.message.includes("Super Admin role")
-          ? "System configuration error - please contact support"
-          : `Account setup failed: ${error.message}`
-        : "Failed to create organization";
+    if (
+      typeof error === "object" &&
+      error &&
+      "message" in error &&
+      typeof error.message === "string"
+    ) {
+      const message = error.message.includes("Super Admin role")
+        ? "System configuration error - please contact support"
+        : `Account setup failed: ${error.message}`;
 
-    throw new Error(message);
+      throw new Error(message);
+    }
+
+    throw new Error("Failed to create organization");
   }
 };
 

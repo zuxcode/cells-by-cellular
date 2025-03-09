@@ -50,17 +50,12 @@ ON tenants FOR
 SELECT
     USING (true);
 
-CREATE POLICY "Users can create tenants"
-ON tenants FOR
-INSERT
-    WITH CHECK (owner_id = auth.uid());
-
 CREATE POLICY "Owners manage tenants"
 ON tenants FOR ALL
 USING (owner_id = auth.uid());
 
--- services table
-CREATE TABLE IF NOT EXISTS services (
+-- tenant_services table
+CREATE TABLE IF NOT EXISTS tenant_services (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id)
     ON DELETE CASCADE,
@@ -70,22 +65,32 @@ CREATE TABLE IF NOT EXISTS services (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX unique_tenant_primary_service ON services (tenant_id) 
+CREATE UNIQUE INDEX unique_tenant_primary_service ON tenant_services (tenant_id) 
 WHERE is_primary = true;
 
 -- Auto-update trigger
 CREATE TRIGGER tenants_updated BEFORE
 UPDATE
-    ON services FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
+    ON tenant_services FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);
 
--- Services RLS Policies
+-- tenant_services RLS Policies
 ALTER TABLE
-    services ENABLE ROW LEVEL SECURITY;
+    tenant_services ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Services public read"
-ON services FOR
+CREATE POLICY "tenant_services public read"
+ON tenant_services FOR
 SELECT
     USING (true);
+
+CREATE POLICY "tenants manage tenant_services"
+ON tenant_services 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
 
 -- Create the tenant_contact table
 CREATE TABLE IF NOT EXISTS tenant_contact (
@@ -102,6 +107,16 @@ CREATE TABLE IF NOT EXISTS tenant_contact (
 
 -- Contact RLS Policies
 ALTER TABLE tenant_contact ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "tenants manage tenant_contact"
+ON tenant_contact 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
 
 -- Create the tenant_address table
 CREATE TABLE IF NOT EXISTS tenant_address (
@@ -120,6 +135,16 @@ CREATE TABLE IF NOT EXISTS tenant_address (
 
 -- Address RLS Policies
 ALTER TABLE tenant_address ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "tenants manage tenant_address"
+ON tenant_address 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
 
 -- Create the tenant_biometrics table
 CREATE TABLE IF NOT EXISTS tenant_biometrics (
@@ -144,6 +169,20 @@ CREATE TABLE IF NOT EXISTS tenant_biometrics (
     CONSTRAINT check_valid_avatar_url CHECK (website ~ '^https?:\/\/[^\s$.?#].[^\s]*$')
 );
 
+ALTER TABLE tenant_biometrics ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "tenants manage tenant_biometrics"
+ON tenant_biometrics 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
+
+
 -- Create the tenant_social_media table
 CREATE TABLE IF NOT EXISTS tenant_social_media (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -158,7 +197,20 @@ CREATE TABLE IF NOT EXISTS tenant_social_media (
     CONSTRAINT check_valid_url CHECK (url ~ '^https?:\/\/[^\s$.?#].[^\s]*$')
 );
 
-CREATE TABLE IF NOT EXISTS staffs(
+ALTER TABLE tenant_social_media ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "tenants manage tenant_social_media"
+ON tenant_social_media 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
+
+CREATE TABLE IF NOT EXISTS tenant_staffs(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id)
     ON DELETE CASCADE,
@@ -169,9 +221,22 @@ CREATE TABLE IF NOT EXISTS staffs(
     CONSTRAINT unique_tenant_staffs UNIQUE (tenant_id, user_id)
 );
 
+ALTER TABLE tenant_staffs ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "tenants manage tenant_staffs"
+ON tenant_staffs 
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM tenants 
+        WHERE owner_id = auth.uid()
+    )
+);
+
 -- Add indexes for tenant_id columns
-CREATE INDEX idx_services_tenant_id
-ON services (tenant_id);
+CREATE INDEX idx_tenant_services_tenant_id
+ON tenant_services (tenant_id);
 
 CREATE INDEX idx_tenant_contact_tenant_id
 ON tenant_contact (tenant_id);
