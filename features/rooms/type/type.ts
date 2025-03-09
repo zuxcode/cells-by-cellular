@@ -8,9 +8,9 @@ const roomStatusEnum = z.enum(roomStatus);
 const roomTypesEnum = z.enum(roomType);
 
 const roomBaseSchema = z.object({
-  beds_name: bedTypesEnum,
-  room_status: roomStatusEnum,
-  room_type: roomTypesEnum,
+  bedType: bedTypesEnum,
+  roomStatus: roomStatusEnum,
+  roomType: roomTypesEnum,
 });
 
 export {

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -28,34 +27,41 @@ import {
 import { roomSchema, RoomSchemaType } from "../schema/create-room-schema";
 import { RoomCounter } from "./room-counter";
 import { ActionLabel, ActionTrigger } from "@/components/button";
-import { bedType, roomStatus } from "@/types/global-type";
+import { bedType, roomStatus, roomType } from "@/types/global-type";
 import { keyExtractor } from "@/utils/key-extractor";
+import { useCreateRoom } from "../hooks/use-create-room";
 
 function CreateRoomForm() {
+  const { onSubmit, isLoading } = useCreateRoom();
   const form = useForm<RoomSchemaType>({
+    mode: "all",
     resolver: zodResolver(roomSchema),
     defaultValues: {
       name: "",
       number: "",
       price: "",
       description: "",
-      beds_name: "single",
-      room_status: "Commissioned",
-      room_size: "",
-      beds_count: "1",
-      max_occupancy: "1",
-      room_type: "single",
+      bedType: "single",
+      roomStatus: "Commissioned",
+      roomSize: "",
+      bedsCount: "1",
+      maxOccupancy: "1",
+      roomType: "single",
       features: "",
     },
   });
 
-  const bedsCount = form.watch("beds_count");
-  const maxOccupancy = form.watch("max_occupancy");
+  const bedsCount = form.watch("bedsCount");
+  const maxOccupancy = form.watch("maxOccupancy");
+
+  const onSubmitWrapper = async (data: RoomSchemaType) => {
+    onSubmit(data, form);
+  };
 
   return (
     <Form {...form}>
       <form
-        // onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmitWrapper)}
         className="flex-1 flex flex-col min-w-64 gap-4"
       >
         <div className="flex gap-4 w-full">
@@ -63,7 +69,7 @@ function CreateRoomForm() {
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="w-[65%] space-y-1">
+              <FormItem className="w-[47%] space-y-1">
                 <FormLabel className="text-small text-neutral-600">
                   Room Name
                 </FormLabel>
@@ -83,11 +89,41 @@ function CreateRoomForm() {
 
           <FormField
             control={form.control}
+            name="roomType"
+            render={({ field }) => (
+              <FormItem className="w-1/4 space-y-1">
+                <FormLabel className="text-small text-neutral-600">
+                  type
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue defaultValue={field.value} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {roomType.map((type, index) => (
+                      <SelectItem key={keyExtractor(type, index)} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="number"
             render={({ field }) => (
-              <FormItem className="w-[35%] space-y-1">
+              <FormItem className="w-[18%] space-y-1">
                 <FormLabel className="text-small text-neutral-600">
-                  Room Number
+                  #No
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -106,12 +142,12 @@ function CreateRoomForm() {
 
         <div className="flex gap-4">
           <RoomCounter
-            name="max_occupancy"
+            name="maxOccupancy"
             label="Guests"
             value={Number(maxOccupancy)}
             onIncrement={() =>
               form.setValue(
-                "max_occupancy",
+                "maxOccupancy",
                 (() => {
                   const computeValue = Number(maxOccupancy) + 1;
                   return String(computeValue);
@@ -120,7 +156,7 @@ function CreateRoomForm() {
             }
             onDecrement={() =>
               form.setValue(
-                "max_occupancy",
+                "maxOccupancy",
                 (() => {
                   const computeValue = Number(maxOccupancy) - 1;
                   return String(computeValue);
@@ -132,13 +168,13 @@ function CreateRoomForm() {
           />
 
           <RoomCounter
-            name="beds_count"
+            name="bedsCount"
             label="Beds"
             form={form}
             value={Number(bedsCount)}
             onIncrement={() =>
               form.setValue(
-                "beds_count",
+                "bedsCount",
                 (() => {
                   const computeValue = Number(bedsCount) + 1;
                   return String(computeValue);
@@ -147,7 +183,7 @@ function CreateRoomForm() {
             }
             onDecrement={() =>
               form.setValue(
-                "beds_count",
+                "bedsCount",
                 (() => {
                   const computeValue = Number(bedsCount) - 1;
                   return String(computeValue);
@@ -189,9 +225,9 @@ function CreateRoomForm() {
         <div className="flex gap-4">
           <FormField
             control={form.control}
-            name="beds_name"
+            name="bedType"
             render={({ field }) => (
-              <FormItem className="w-full space-y-1">
+              <FormItem className="w-[36%] space-y-1">
                 <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
                   <Image
                     alt="bed name"
@@ -227,9 +263,9 @@ function CreateRoomForm() {
 
           <FormField
             control={form.control}
-            name="room_size"
+            name="roomSize"
             render={({ field }) => (
-              <FormItem className="w-full space-y-1">
+              <FormItem className="w-[25%] space-y-1">
                 <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
                   <Image
                     alt="room size"
@@ -255,9 +291,9 @@ function CreateRoomForm() {
 
           <FormField
             control={form.control}
-            name="room_status"
+            name="roomStatus"
             render={({ field }) => (
-              <FormItem className="w-full space-y-1">
+              <FormItem className="w-[40%] space-y-1">
                 <FormLabel className="flex items-center text-small gap-2 text-neutral-600 space-x-1">
                   <Image
                     alt="room size"
@@ -351,7 +387,10 @@ function CreateRoomForm() {
         />
 
         {/* <RoomImageUpload /> */}
-        <ActionTrigger>
+        <ActionTrigger
+          disabled={isLoading || !form.formState.isValid}
+          type="submit"
+        >
           <ActionLabel>Create Room</ActionLabel>
         </ActionTrigger>
       </form>

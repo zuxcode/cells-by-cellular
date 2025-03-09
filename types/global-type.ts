@@ -13,6 +13,7 @@ export type ServerResponse<T = {}> = {
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
 
+
 // type roomStatus = Database["public"]["Enums"]["room_status_enum"];
 // type bedType = Database["public"]["Enums"]["bed_type_enum"];
 // type roomType = Database["public"]["Enums"]["room_type_enum"];

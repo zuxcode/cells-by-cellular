@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { roomBaseSchema } from "../../type";
+import { RoomTypeEnum } from "@/types/global-type";
 
 // Reusable schema for numeric strings
 const numericStringSchema = (fieldName: string) =>
@@ -18,7 +19,7 @@ const roomSchema = roomBaseSchema.extend({
     .min(3, "Room name must be at least 3 characters")
     .max(50, "Room name cannot exceed 50 characters")
     .regex(/^[\w\s-]+$/, "Invalid characters in room name"),
-
+  
   description: z
     .string()
     .trim()
@@ -46,9 +47,9 @@ const roomSchema = roomBaseSchema.extend({
     .regex(/^\d+(\.\d{1,2})?$/, "Invalid price format")
     .pipe(z.string().min(1, "Price must be at least $1")),
 
-  beds_count: numericStringSchema("Bed count"),
-  room_size: numericStringSchema("Room size"),
-  max_occupancy: numericStringSchema("Maximum occupancy"),
+  bedsCount: numericStringSchema("Bed count"),
+  roomSize: numericStringSchema("Room size"),
+  maxOccupancy: numericStringSchema("Maximum occupancy"),
 });
 
 // Export the schema and enums

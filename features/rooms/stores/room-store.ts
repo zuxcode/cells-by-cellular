@@ -4,9 +4,9 @@ import { RoomBaseSchema } from "../type";
 
 import { dummyRooms } from "./dummy-data";
 
-type RoomStatus = RoomBaseSchema["room_status"];
-type BedType = RoomBaseSchema["beds_name"];
-type RoomType = RoomBaseSchema["room_type"];
+type RoomStatus = RoomBaseSchema["roomStatus"];
+type BedType = RoomBaseSchema["bedType"];
+type RoomType = RoomBaseSchema["roomType"];
 
 interface RoomData {
   id: string;

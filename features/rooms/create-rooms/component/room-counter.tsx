@@ -61,6 +61,7 @@ function RoomCounter({
                   id={name}
                   className="w-[10px] text-small text-center font-medium"
                   aria-label={label}
+                  readOnly
                   {...field}
                   value={value}
                 />
