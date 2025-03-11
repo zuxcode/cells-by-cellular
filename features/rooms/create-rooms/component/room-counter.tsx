@@ -35,7 +35,7 @@ function RoomCounter({
   form,
 }: RoomCounterProps) {
   return (
-    <div className="flex flex-col space-y-1 w-fit">
+    <div className="flex flex-col space-y-1 w-fit relative">
       <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="h-5 w-5" />
         <span className="text-small font-medium text-neutral-600">{label}</span>
@@ -66,7 +66,7 @@ function RoomCounter({
                   value={value}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="absolute bottom-0 left-0"/>
             </FormItem>
           )}
         />
@@ -74,6 +74,7 @@ function RoomCounter({
           variant="ghost"
           type="button"
           onClick={onIncrement}
+          disabled={value === max}
           className="rounded-lg p-2"
           aria-label={`Increase ${label.toLowerCase()}`}
         >

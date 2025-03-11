@@ -1,5 +1,14 @@
 import { Database } from "@/utils/supabase/db-type";
 import { z } from "zod";
+import mime from "mime-types";
+
+export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const MAX_FILE_COUNT = 10;
+
+export interface FileWithId extends File {
+  id: string;
+}
 
 export type Element<T extends React.ElementType = "div"> =
   React.ComponentPropsWithoutRef<T> & {
@@ -12,7 +21,6 @@ export type ServerResponse<T = {}> = {
   message: string;
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
-
 
 // type roomStatus = Database["public"]["Enums"]["room_status_enum"];
 // type bedType = Database["public"]["Enums"]["bed_type_enum"];
@@ -40,3 +48,14 @@ export {
 };
 
 export type { BedType, RoomStatus, RoomType };
+
+export const fileSchema = z.custom<Blob>();
+// .refine((file) => file instanceof Blob, "Invalid file type");
+// .refine(
+//   (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
+//   `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit`
+// );
+// .refine(
+//   (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+//   "Only JPEG/PNG files are allowed"
+// );

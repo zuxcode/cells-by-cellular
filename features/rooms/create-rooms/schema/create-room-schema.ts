@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { roomBaseSchema } from "../../type";
-import { RoomTypeEnum } from "@/types/global-type";
+import { fileSchema, MAX_FILE_COUNT, MAX_FILE_SIZE } from "@/types/global-type";
 
 // Reusable schema for numeric strings
 const numericStringSchema = (fieldName: string) =>
@@ -19,15 +19,15 @@ const roomSchema = roomBaseSchema.extend({
     .min(3, "Room name must be at least 3 characters")
     .max(50, "Room name cannot exceed 50 characters")
     .regex(/^[\w\s-]+$/, "Invalid characters in room name"),
-  
+
   description: z
     .string()
     .trim()
     .min(1, "Description is required")
     .min(10, "Description must be at least 10 characters")
     .max(500, "Description cannot exceed 500 characters"),
-  
-    features: z
+
+  features: z
     .string()
     .trim()
     .nonempty("Features are required")
@@ -46,6 +46,11 @@ const roomSchema = roomBaseSchema.extend({
     .min(1, "Price is required")
     .regex(/^\d+(\.\d{1,2})?$/, "Invalid price format")
     .pipe(z.string().min(1, "Price must be at least $1")),
+
+  files: z
+    .array(fileSchema)
+    .min(1, "At least one image is required")
+    .max(MAX_FILE_COUNT, `Maximum of ${MAX_FILE_COUNT} images allowed`),
 
   bedsCount: numericStringSchema("Bed count"),
   roomSize: numericStringSchema("Room size"),

@@ -8,11 +8,12 @@ const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   return {
     ...rawFormData,
+    files: formData.getAll("files") as Blob[],
   };
 };
 
-const validateFormData = (data: unknown) => {
-  const result = roomSchema.safeParse(data);
+const validateFormData = async (data: unknown) => {
+  const result = await roomSchema.safeParseAsync(data);
   if (!result.success) {
     return {
       status: "error" as const,
@@ -24,24 +25,46 @@ const validateFormData = (data: unknown) => {
 };
 
 const createRoomWithSupabase = async (props: RoomSchemaType) => {
+  const {
+    bedType,
+    bedsCount,
+    description,
+    features,
+    files,
+    maxOccupancy,
+    name,
+    number,
+    price,
+    roomSize,
+    roomStatus,
+    roomType,
+  } = props;
   const supabase = await createClient();
-  console.log("props: ", props);
-  //   const { error } = await supabase.rpc("create_room", {
-  //     name,
-  //     number,
-  //     price,
-  //     description,
-  //     bedType,
-  //     roomStatus,
-  //     roomSize,
-  //     bedsCount,
-  //     maxOccupancy,
-  //     roomType,
-  //   });
+  const { error } = await supabase.from("hotel_rooms").insert([
+    {
+      name,
+      features,
+      description,
+      bed_type: bedType,
+      room_type: roomType,
+      bed_max: Number(bedsCount),
+      guest_max: Number(maxOccupancy),
+      number: Number(number),
+      price: Number(price),
+      size: Number(roomSize),
+      status:
+        roomStatus === "Commissioned" ? "commissioned" : "not_commissioned",
+      // image_urls: "files",
+      tenant_id: "f54f2714-c54c-4940-9d4b-8b902828c39c",
+      service_id: "1b0c05e3-4a79-43d5-b3b3-210e1d819076",
+      created_by: "367098a4-c3ba-4a8c-8372-3faf113fd450",
+    },
+  ]);
 
-  //   if (error) {
-  //     throw new Error(error?.message || "Failed to create room");
-  //   }
+  if (error) {
+    console.log("error: ", error);
+    throw new Error(error?.message || "Failed to create room");
+  }
 };
 
 export const createRoomAction = async (
@@ -49,7 +72,8 @@ export const createRoomAction = async (
 ): Promise<ServerResponse<RoomSchemaType>> => {
   try {
     const transformedData = transformFormData(formData);
-    const validationResult = validateFormData(transformedData);
+    console.log(transformedData.files[0].type);
+    const validationResult = await validateFormData(transformedData);
 
     if ("fieldErrors" in validationResult) {
       return validationResult;

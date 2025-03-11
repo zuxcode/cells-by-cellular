@@ -30,6 +30,7 @@ import { ActionLabel, ActionTrigger } from "@/components/button";
 import { bedType, roomStatus, roomType } from "@/types/global-type";
 import { keyExtractor } from "@/utils/key-extractor";
 import { useCreateRoom } from "../hooks/use-create-room";
+import { Uploader } from "./uploader";
 
 function CreateRoomForm() {
   const { onSubmit, isLoading } = useCreateRoom();
@@ -61,6 +62,7 @@ function CreateRoomForm() {
   return (
     <Form {...form}>
       <form
+        encType="multipart/form-data"
         onSubmit={form.handleSubmit(onSubmitWrapper)}
         className="flex-1 flex flex-col min-w-64 gap-4"
       >
@@ -386,10 +388,11 @@ function CreateRoomForm() {
           )}
         />
 
-        {/* <RoomImageUpload /> */}
+        <Uploader form={form} />
         <ActionTrigger
           disabled={isLoading || !form.formState.isValid}
           type="submit"
+          isProcessing={isLoading}
         >
           <ActionLabel>Create Room</ActionLabel>
         </ActionTrigger>

@@ -1,9 +1,5 @@
+import { FileWithId } from "@/types/global-type";
 import { create } from "zustand";
-
-interface FileWithId extends File {
-  id: string;
-}
-
 interface CreateRoomStore {
   sectionControl: "create" | "selected";
   setSectionControl: () => void;
