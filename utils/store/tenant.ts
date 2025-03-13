@@ -12,15 +12,20 @@ interface Tenant {
   services: Record<string, Service>; // Normalized services
 }
 
+interface AddTanentProps extends Omit<Tenant, "services"> {
+	service: Service
+}
+
+
 interface TenantStore {
   tenants: Record<string, Tenant>; // Normalized tenants
   selectedTenantId: string | null;
   selectedServiceId: string | null;
 
   actions: {
-    addTenant: (tenant: Omit<Tenant, "services">) => void;
+    addTenant:(tenant: AddTanentProps) => void;
     addServiceToTenant: (tenantId: string, service: Service) => void;
-    selectTenant: (tenantId: string | null) => void;
+    selectTenant: (tenantId: string | null, serviceId?: string) => void;
     selectService: (serviceId: string | null) => void;
     getService: (tenantId: string, serviceId: string) => Service | undefined;
     getTenants: () => Tenant[];
@@ -37,7 +42,12 @@ const useTenant = create<TenantStore>((set, get) => ({
       set((state) => ({
         tenants: {
           ...state.tenants,
-          [tenant.id]: { ...tenant, services: {} },
+          [tenant.id]: { 
+		  ...tenant, 
+		  services: {
+			  [tenant.service.id]: tenant.service
+		  }
+	  },
         },
       })),
 
@@ -60,10 +70,10 @@ const useTenant = create<TenantStore>((set, get) => ({
         };
       }),
 
-    selectTenant: (tenantId) =>
+    selectTenant: (tenantId, serviceId = null) =>
       set({
         selectedTenantId: tenantId,
-        selectedServiceId: null, // Reset service selection when tenant changes
+        selectedServiceId: serviceId, 
       }),
 
     selectService: (serviceId) => set({ selectedServiceId: serviceId }),

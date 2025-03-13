@@ -36,13 +36,59 @@ type RoomStatusUnion = UnionToTuple<RoomStatusLiteral>;
 type RoomTypeUnion = UnionToTuple<RoomTypeLiteral>;
 type BedTypeUnion = UnionToTuple<BedTypeLiteral>;
 
-const bedType: BedTypeUnion = ["single", "double", "queen", "king"] as const;
+const bedType: BedTypeUnion = [
+ 'twin', 
+  'full', 
+  'queen', 
+  'king', 
+  'double_double', 
+  'sofa_bed', 
+  'bunk_bed', 
+  'murphy_bed', 
+  'crib', 
+  'water_bed', 
+  'daybed',
+  'other'
+] as const;
 const roomStatus: RoomStatusUnion = ["commissioned", "not_commissioned"] as const;
-const roomType:RoomTypeUnion = ["single", "double", "suite", "family"] as const;
+const roomType:RoomTypeUnion = [
+ 'single', 
+  'double', 
+  'twin_shared', 
+  'studio', 
+  'suite', 
+  'family', 
+  'dormitory', 
+  'ada_accessible', 
+  'executive', 
+  'connecting', 
+  'loft', 
+  'penthouse', 
+  'cabana',
+  'other'
+] as const;
 
 const BedTypeEnum = z.enum(bedType);
 const RoomStatusEnum = z.enum(roomStatus);
 const RoomTypeEnum = z.enum(roomType);
+
+// Correctly extract main media types from accepted MIME types
+const extTypes = ACCEPTED_FILE_TYPES.map(type => type.split('/')[1]);
+const uniqueExts = [...new Set(extTypes)]; // Remove duplicates
+const extString = uniqueExts.join(', '); // Create human-readable string
+
+export const fileSchema = z
+  .custom<Blob>()
+  .refine((file) => file instanceof Blob, "Invalid file type")
+  .refine(
+    (file) => file.size <= MAX_FILE_SIZE,
+    `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit`
+  )
+  .refine(
+    (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+    `Only ${extString} files are allowed`
+  );
+
 
 type BedType = z.infer<typeof BedTypeEnum>;
 type RoomStatus = z.infer<typeof RoomStatusEnum>;
@@ -59,14 +105,3 @@ export {
 
 export type { BedType, RoomStatus, RoomType };
 
-export const fileSchema = z
-  .custom<Blob>()
-  .refine((file) => file instanceof Blob, "Invalid file type")
-  .refine(
-    (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
-    `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit`
-  )
-  .refine(
-    (file) => ACCEPTED_FILE_TYPES.includes(file.type),
-    "Only JPEG/PNG files are allowed"
-  );

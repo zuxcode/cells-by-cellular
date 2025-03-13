@@ -662,6 +662,7 @@ export type Database = {
               staff_id: string
               role_id: string
               tenant_id: string
+              v_service_id: string
             }[]
           }
         | {
