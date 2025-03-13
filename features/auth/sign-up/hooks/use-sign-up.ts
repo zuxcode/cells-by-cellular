@@ -23,7 +23,8 @@ type UseSignInReturn = {
 const useSignUp = (): UseSignInReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
-  const { addTenant, addServiceToTenant, selectService, selectTenant } = useTenantActions();
+  const { addTenant, selectTenant } = useTenantActions();
+
 
   const onSubmit = useCallback<OnSubmitHandler>(
     async (data, form) => {
@@ -37,28 +38,24 @@ const useSignUp = (): UseSignInReturn => {
 
       try {
         const result = await signUpAction(formData);
-
         // Handle success
         if (result.status === "success") {
-          toast.success("Account created successfully!");
-          router.replace("/dashboard");
-          form.reset();
-          if (!result.data) return;
+           toast.success("Account created successfully!");
+           router.replace("/dashboard");
+           form.reset();
 
           addTenant({
-            id: result.data.staff_id,
-            staffId: result.data.staff_id,
-            roleId: result.data.role_id,
-          });
-
-          addServiceToTenant(result.data.tenant_id, {
             id: result.data.tenant_id,
-            name: "Hotel",
+            staffId:  result.data.staff_id,
+            roleId:   result.data.role_id,
+	    service: {
+	       id: result.data.service_id,
+               name: "hotel"
+             }
           });
 
-          selectTenant(result.data.tenant_id);
-          selectService(result.data.tenant_id);
-          return;
+          selectTenant(result.data.tenant_id, result.data.service_id);
+      	  return;
         }
 
         // Handle field errors
@@ -73,13 +70,8 @@ const useSignUp = (): UseSignInReturn => {
           });
         }
 
-        // Handle generic error message
         if (result.message) {
-          form.setError("root", {
-            type: "server",
-            message: result.message,
-          });
-          toast.error(result.message);
+        toast.error(result.message);
         }
       } catch (error) {
         toast.error(
