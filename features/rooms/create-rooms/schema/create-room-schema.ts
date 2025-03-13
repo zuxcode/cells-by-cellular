@@ -58,10 +58,10 @@ const roomSchema = roomBaseSchema.extend({
 });
 
 const serverRoomSchema = roomSchema.extend({
-  tenantId: z.string().nonempty("Tenant id is required").uuid(),
-  roleId: z.string().nonempty("Role id is required").uuid(),
-  staffId: z.string().nonempty("Staff id is required").uuid(),
-  serviceId: z.string().nonempty("Service id is required").uuid(),
+  tenantId: z.string().nonempty("Tenant id is required"),
+  roleId: z.string().nonempty("Role id is required"),
+  staffId: z.string().nonempty("Staff id is required"),
+  serviceId: z.string().nonempty("Service id is required"),
 });
 
 // Export the schema and enums

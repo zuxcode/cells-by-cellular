@@ -79,7 +79,8 @@ const uploadFilesWithSupabase = async ({
 
     return uploadResults;
   } catch (error) {
-    throw new Error("File upload operation failed");
+    console.log(error)
+	  throw new Error("File upload operation failed");
   }
 };
 
@@ -97,12 +98,15 @@ const createRoomWithSupabase = async (props: ServerRoomSchema) => {
     roomSize,
     roomStatus,
     roomType,
+    tenantId,
+    serviceId,
+    staffId
   } = props;
   const supabase = await createClient();
 
   const uploadResults = await uploadFilesWithSupabase({
     files,
-    tenantId: "b0fd7308-d614-4363-8c60-264981b6abbd",
+    tenantId,
   });
 
   const validUrls = uploadResults
@@ -122,11 +126,12 @@ const createRoomWithSupabase = async (props: ServerRoomSchema) => {
       price: Number(price),
       size: Number(roomSize),
       status:
-        roomStatus === "Commissioned" ? "commissioned" : "not_commissioned",
+        roomStatus,
       image_urls: validUrls,
-      tenant_id: "b0fd7308-d614-4363-8c60-264981b6abbd",
-      service_id: "691afb84-bcd7-43a9-abab-62f8069eea61",
-      created_by: "24ccd554-55b6-4a06-bcd9-1163e8240d8c",
+      tenant_id:  tenantId,     
+      service_id: serviceId,
+      created_by: staffId,
+      updated_by: staffId
     },
   ]);
 
@@ -140,9 +145,8 @@ export const createRoomAction = async (
 ): Promise<ServerResponse<ServerRoomSchema>> => {
   try {
     const transformedData = transformFormData(formData);
-
     const validationResult = await validateFormData(transformedData);
-
+    
     if ("fieldErrors" in validationResult) {
       return validationResult;
     }

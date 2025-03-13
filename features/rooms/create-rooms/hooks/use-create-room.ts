@@ -4,7 +4,7 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { createRoomAction } from "../server/action/create-room-action";
 import { useImageUploaderStore } from "../stores/image-uploader-store";
-import { useCurrentService, useCurrentTenant } from "@/utils/store/tenant";
+import { useCurrentTenant } from "@/utils/store/tenant";
 import { ServerResponse } from "@/types/global-type";
 
 type OnSubmitHandler = (
@@ -21,11 +21,12 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { files, resetImage } = useImageUploaderStore();
 
-  const tenant = useCurrentTenant()!;
-  const service = useCurrentService()!;
+  const tenant = useCurrentTenant();
+  const services = tenant.services;
+  const serviceKey =  Object.keys(services)[0]
 
   const validateContext = () => {
-    if (!tenant || !service) {
+    if (tenant.length <= 0) {
       toast.error("Missing organization context");
       return false;
     }
@@ -69,7 +70,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
       });
 
       formData.append("tenantId", tenant.id);
-      formData.append("serviceId", service.id);
+      formData.append("serviceId", services[serviceKey].id);
       formData.append("staffId", tenant.staffId);
       formData.append("roleId", tenant.roleId);
 
@@ -95,7 +96,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
         setIsLoading(false);
       }
     },
-    [files, tenant, service, resetImage]
+    [files, tenant, resetImage]
   );
 
   return { onSubmit, isLoading };
