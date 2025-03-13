@@ -34,8 +34,8 @@ const transformRoomData = (
 export const getRoomsRsc = async (): Promise<RoomData[]> => {
   try {
     const data = await getRoomsWithSupabase();
-    const transformRoom = transformRoomData(data);
-    return transformRoom;
+    const transformedRoom = transformRoomData(data);
+    return transformedRoom;
   } catch (error) {
     return [];
   }
