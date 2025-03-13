@@ -130,66 +130,66 @@ export type Database = {
       hotel_rooms: {
         Row: {
           bed_max: number
-          bed_type: string | null
+          bed_type: Database["public"]["Enums"]["bed_type"]
           created_at: string
-          created_by: string | null
-          description: string | null
-          features: Json | null
+          created_by: string
+          description: string
+          features: Json
           guest_max: number
           id: string
-          image_urls: string[] | null
+          image_urls: string[]
           name: string
           number: number
           price: number
-          room_type: string | null
+          room_type: Database["public"]["Enums"]["room_type"]
           service_id: string
           size: number
           status: Database["public"]["Enums"]["room_status_enum"]
           tenant_id: string
           updated_at: string
-          updated_by: string | null
+          updated_by: string
         }
         Insert: {
           bed_max?: number
-          bed_type?: string | null
+          bed_type: Database["public"]["Enums"]["bed_type"]
           created_at?: string
-          created_by?: string | null
-          description?: string | null
-          features?: Json | null
+          created_by: string
+          description: string
+          features: Json
           guest_max?: number
           id?: string
-          image_urls?: string[] | null
+          image_urls?: string[]
           name: string
           number: number
           price: number
-          room_type?: string | null
+          room_type: Database["public"]["Enums"]["room_type"]
           service_id: string
           size: number
           status?: Database["public"]["Enums"]["room_status_enum"]
           tenant_id: string
           updated_at?: string
-          updated_by?: string | null
+          updated_by: string
         }
         Update: {
           bed_max?: number
-          bed_type?: string | null
+          bed_type?: Database["public"]["Enums"]["bed_type"]
           created_at?: string
-          created_by?: string | null
-          description?: string | null
-          features?: Json | null
+          created_by?: string
+          description?: string
+          features?: Json
           guest_max?: number
           id?: string
-          image_urls?: string[] | null
+          image_urls?: string[]
           name?: string
           number?: number
           price?: number
-          room_type?: string | null
+          room_type?: Database["public"]["Enums"]["room_type"]
           service_id?: string
           size?: number
           status?: Database["public"]["Enums"]["room_status_enum"]
           tenant_id?: string
           updated_at?: string
-          updated_by?: string | null
+          updated_by?: string
         }
         Relationships: [
           {
@@ -650,16 +650,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_tenant_and_related: {
-        Args: {
-          p_user_id: string
-          p_first_name: string
-          p_middle_name: string
-          p_last_name: string
-          p_tenant_name: string
-        }
-        Returns: undefined
-      }
+      create_tenant_and_related:
+        | {
+            Args: {
+              p_first_name: string
+              p_middle_name: string
+              p_last_name: string
+              p_tenant_name: string
+            }
+            Returns: {
+              staff_id: string
+              role_id: string
+              tenant_id: string
+            }[]
+          }
+        | {
+            Args: {
+              p_user_id: string
+              p_first_name: string
+              p_middle_name: string
+              p_last_name: string
+              p_tenant_name: string
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       base_action_enum: "create" | "read" | "update" | "delete" | "manage"
@@ -685,9 +699,33 @@ export type Database = {
         | "IT Admin"
         | "Department Managers"
         | "Staff"
+      bed_type:
+        | "Twin"
+        | "Full"
+        | "Queen"
+        | "King"
+        | "DoubleDouble"
+        | "SofaBed"
+        | "BunkBed"
+        | "MurphyBed"
+        | "Crib"
+        | "WaterBed"
+        | "other"
       gender_enum: "male" | "female" | "other" | "prefer_not_to_say"
       phone_enum: "phone" | "telephone"
       room_status_enum: "commissioned" | "not_commissioned"
+      room_type:
+        | "Single"
+        | "Double"
+        | "TwinShared"
+        | "Studio"
+        | "Suite"
+        | "Family"
+        | "Dormitory"
+        | "ADA"
+        | "Executive"
+        | "Connecting"
+        | "other"
       service_enum:
         | "hotel"
         | "restaurant"

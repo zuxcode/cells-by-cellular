@@ -4,6 +4,7 @@ import { signUpAction } from "../server/actions/sign-up-action";
 import toast from "react-hot-toast";
 import React, { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTenantActions } from "@/utils/store/tenant";
 
 type OnSubmitHandler = (
   data: SignUpSchemaType,
@@ -22,57 +23,76 @@ type UseSignInReturn = {
 const useSignUp = (): UseSignInReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
+  const { addTenant, addServiceToTenant, selectService, selectTenant } = useTenantActions();
 
-  const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
-    setIsLoading(true);
-    const formData = new FormData();
+  const onSubmit = useCallback<OnSubmitHandler>(
+    async (data, form) => {
+      setIsLoading(true);
+      const formData = new FormData();
 
-    // Append form data to FormData object
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, String(value));
-    });
+      // Append form data to FormData object
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, String(value));
+      });
 
-    try {
-      const result = await signUpAction(formData);
+      try {
+        const result = await signUpAction(formData);
 
-      // Handle success
-      if (result.status === "success") {
-        toast.success("Account created successfully!");
-        router.replace("/dashboard");
-        form.reset();
-        return;
+        // Handle success
+        if (result.status === "success") {
+          toast.success("Account created successfully!");
+          router.replace("/dashboard");
+          form.reset();
+          if (!result.data) return;
+
+          addTenant({
+            id: result.data.staff_id,
+            staffId: result.data.staff_id,
+            roleId: result.data.role_id,
+          });
+
+          addServiceToTenant(result.data.tenant_id, {
+            id: result.data.tenant_id,
+            name: "Hotel",
+          });
+
+          selectTenant(result.data.tenant_id);
+          selectService(result.data.tenant_id);
+          return;
+        }
+
+        // Handle field errors
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+            if (Array.isArray(messages)) {
+              form.setError(field as keyof SignUpSchemaType, {
+                type: "server",
+                message: messages.join(", "), // Combine multiple error messages
+              });
+            }
+          });
+        }
+
+        // Handle generic error message
+        if (result.message) {
+          form.setError("root", {
+            type: "server",
+            message: result.message,
+          });
+          toast.error(result.message);
+        }
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again."
+        );
+      } finally {
+        setIsLoading(false);
       }
-
-      // Handle field errors
-      if (result.fieldErrors) {
-        Object.entries(result.fieldErrors).forEach(([field, messages]) => {
-          if (Array.isArray(messages)) {
-            form.setError(field as keyof SignUpSchemaType, {
-              type: "server",
-              message: messages.join(", "), // Combine multiple error messages
-            });
-          }
-        });
-      }
-
-      // Handle generic error message
-      if (result.message) {
-        form.setError("root", {
-          type: "server",
-          message: result.message,
-        });
-        toast.error(result.message);
-      }
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [setIsLoading]
+  );
 
   return { onSubmit, isLoading };
 };

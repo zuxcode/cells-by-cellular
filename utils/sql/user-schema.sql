@@ -7,7 +7,7 @@ CREATE TYPE gender_enum AS ENUM ('male', 'female', 'other', 'prefer_not_to_say')
 -- Create the users table
 CREATE TABLE IF NOT EXISTS users (
     user_id UUID PRIMARY KEY REFERENCES auth.users(id)
-    ON DELETE CASCADE,
+    ON DELETE CASCADE DEFAULT auth.uuid(),
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50) DEFAULT NULL,

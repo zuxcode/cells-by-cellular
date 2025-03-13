@@ -30,7 +30,7 @@ CREATE TYPE social_enum AS ENUM (
 CREATE TABLE IF NOT EXISTS tenants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     owner_id UUID NOT NULL REFERENCES users(user_id)
-    ON DELETE CASCADE,
+    ON DELETE CASCADE DEFAULT auth.uuid(),
     name VARCHAR(255) NOT NULL CHECK (length(name) >= 2),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

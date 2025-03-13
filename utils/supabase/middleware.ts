@@ -49,16 +49,6 @@ export const updateSession = async (request: NextRequest) => {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
-    if (user.data) {
-      if (
-        request.nextUrl.pathname === "/sign-in" ||
-        request.nextUrl.pathname === "/sign-up" ||
-        request.nextUrl.pathname === "/forgot-password"
-      ) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-    }
-
     return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!

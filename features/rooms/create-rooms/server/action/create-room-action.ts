@@ -1,8 +1,18 @@
 "use server";
 
+import { v4 } from "uuid";
 import { createClient } from "@/utils/supabase/server";
 import { ServerResponse } from "@/types/global-type";
-import { roomSchema, RoomSchemaType } from "../../schema/create-room-schema";
+import {
+  serverRoomSchema,
+  ServerRoomSchema,
+} from "../../schema/create-room-schema";
+
+interface UploadFileWithSupabaseProps {
+  files: any[];
+  tenantId: string;
+  service?: string;
+}
 
 const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
@@ -13,7 +23,7 @@ const transformFormData = (formData: FormData) => {
 };
 
 const validateFormData = async (data: unknown) => {
-  const result = await roomSchema.safeParseAsync(data);
+  const result = await serverRoomSchema.safeParseAsync(data);
   if (!result.success) {
     return {
       status: "error" as const,
@@ -24,7 +34,56 @@ const validateFormData = async (data: unknown) => {
   return result.data;
 };
 
-const createRoomWithSupabase = async (props: RoomSchemaType) => {
+const uploadFilesWithSupabase = async ({
+  files,
+  tenantId,
+  service = "hotel",
+}: UploadFileWithSupabaseProps) => {
+  const supabase = await createClient();
+  const uploadResults = [];
+  const uniqueId = v4();
+  try {
+    for (const file of files) {
+      const filePath = `${tenantId}/${service}/${uniqueId}-${file.name}`;
+
+      const { data, error } = await supabase.storage
+        .from("tenant")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type,
+        });
+
+      if (error) {
+        console.error(`Failed to upload ${file.name}:`, error);
+        uploadResults.push({
+          fileName: file.name,
+          success: false,
+          error: error.message,
+        });
+        continue;
+      }
+
+      const { data: public_url } = supabase.storage
+        .from("tenant")
+        .getPublicUrl(data.path);
+
+      uploadResults.push({
+        fileName: file.name,
+        success: true,
+        path: data.path,
+        url: public_url,
+      });
+      console.log("public_url: ", public_url);
+    }
+
+    return uploadResults;
+  } catch (error) {
+    throw new Error("File upload operation failed");
+  }
+};
+
+const createRoomWithSupabase = async (props: ServerRoomSchema) => {
   const {
     bedType,
     bedsCount,
@@ -40,6 +99,16 @@ const createRoomWithSupabase = async (props: RoomSchemaType) => {
     roomType,
   } = props;
   const supabase = await createClient();
+
+  const uploadResults = await uploadFilesWithSupabase({
+    files,
+    tenantId: "b0fd7308-d614-4363-8c60-264981b6abbd",
+  });
+
+  const validUrls = uploadResults
+    .filter((result) => result.url !== undefined)
+    .map((result) => result.url.publicUrl);
+
   const { error } = await supabase.from("hotel_rooms").insert([
     {
       name,
@@ -54,25 +123,24 @@ const createRoomWithSupabase = async (props: RoomSchemaType) => {
       size: Number(roomSize),
       status:
         roomStatus === "Commissioned" ? "commissioned" : "not_commissioned",
-      // image_urls: "files",
-      tenant_id: "f54f2714-c54c-4940-9d4b-8b902828c39c",
-      service_id: "1b0c05e3-4a79-43d5-b3b3-210e1d819076",
-      created_by: "367098a4-c3ba-4a8c-8372-3faf113fd450",
+      image_urls: validUrls,
+      tenant_id: "b0fd7308-d614-4363-8c60-264981b6abbd",
+      service_id: "691afb84-bcd7-43a9-abab-62f8069eea61",
+      created_by: "24ccd554-55b6-4a06-bcd9-1163e8240d8c",
     },
   ]);
 
   if (error) {
-    console.log("error: ", error);
     throw new Error(error?.message || "Failed to create room");
   }
 };
 
 export const createRoomAction = async (
   formData: FormData
-): Promise<ServerResponse<RoomSchemaType>> => {
+): Promise<ServerResponse<ServerRoomSchema>> => {
   try {
     const transformedData = transformFormData(formData);
-    console.log(transformedData.files[0].type);
+
     const validationResult = await validateFormData(transformedData);
 
     if ("fieldErrors" in validationResult) {

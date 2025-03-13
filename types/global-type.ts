@@ -1,10 +1,15 @@
 import { Database } from "@/utils/supabase/db-type";
 import { z } from "zod";
-import mime from "mime-types";
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const MAX_FILE_COUNT = 10;
+
+type UnionToTuple<T, U = T> = [T] extends [never]
+  ? []
+  : U extends any
+  ? [U, ...UnionToTuple<Exclude<T, U>>]
+  : [];
 
 export interface FileWithId extends File {
   id: string;
@@ -16,19 +21,24 @@ export type Element<T extends React.ElementType = "div"> =
   };
 
 // Define a more robust response type
-export type ServerResponse<T = {}> = {
+export type ServerResponse<T = {}, D = {}> = {
   status: "success" | "error";
   message: string;
+  data?: D;
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
 
-// type roomStatus = Database["public"]["Enums"]["room_status_enum"];
-// type bedType = Database["public"]["Enums"]["bed_type_enum"];
-// type roomType = Database["public"]["Enums"]["room_type_enum"];
+type RoomStatusLiteral = Database["public"]["Enums"]["room_status_enum"];
+type RoomTypeLiteral = Database["public"]["Enums"]["room_type"];
+type BedTypeLiteral = Database["public"]["Enums"]["bed_type"];
 
-const bedType = ["single", "double", "queen", "king"] as const;
-const roomStatus = ["Commissioned", "Not-commissioned"] as const;
-const roomType = ["single", "double", "suite", "family"] as const;
+type RoomStatusUnion = UnionToTuple<RoomStatusLiteral>;
+type RoomTypeUnion = UnionToTuple<RoomTypeLiteral>;
+type BedTypeUnion = UnionToTuple<BedTypeLiteral>;
+
+const bedType: BedTypeUnion = ["single", "double", "queen", "king"] as const;
+const roomStatus: RoomStatusUnion = ["commissioned", "not_commissioned"] as const;
+const roomType:RoomTypeUnion = ["single", "double", "suite", "family"] as const;
 
 const BedTypeEnum = z.enum(bedType);
 const RoomStatusEnum = z.enum(roomStatus);
@@ -49,13 +59,14 @@ export {
 
 export type { BedType, RoomStatus, RoomType };
 
-export const fileSchema = z.custom<Blob>();
-// .refine((file) => file instanceof Blob, "Invalid file type");
-// .refine(
-//   (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
-//   `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit`
-// );
-// .refine(
-//   (file) => ACCEPTED_FILE_TYPES.includes(file.type),
-//   "Only JPEG/PNG files are allowed"
-// );
+export const fileSchema = z
+  .custom<Blob>()
+  .refine((file) => file instanceof Blob, "Invalid file type")
+  .refine(
+    (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
+    `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit`
+  )
+  .refine(
+    (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+    "Only JPEG/PNG files are allowed"
+  );

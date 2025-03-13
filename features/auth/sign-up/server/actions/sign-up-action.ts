@@ -10,6 +10,12 @@ import {
 } from "@/features/auth/schemas/auth-schema";
 import { createAdminClient } from "@/utils/supabase/server-admin";
 
+interface TenantRPCResponse {
+  staff_id: string;
+  role_id: string;
+  tenant_id: string;
+}
+
 const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   return {
@@ -50,24 +56,25 @@ const parseFullName = (fullName: string) => {
 const createTenant = async ({
   fullName,
   id,
-}: Pick<SignUpSchemaType, "fullName"> & User) => {
+}: Pick<SignUpSchemaType, "fullName"> & User): Promise<TenantRPCResponse> => {
   try {
     const supabase = await createClient();
     const { firstName, middleName, lastName } = parseFullName(fullName);
     const tenantName = `${firstName}'s Organization`;
-    const { error } = await supabase.rpc("create_tenant_and_related", {
-      p_user_id: id,
-      p_first_name: firstName,
-      p_middle_name: middleName,
-      p_last_name: lastName,
-      p_tenant_name: tenantName,
-    });
+    const { error, data } = await supabase
+      .rpc("create_tenant_and_related", {
+        p_first_name: firstName,
+        p_middle_name: middleName,
+        p_last_name: lastName,
+        p_tenant_name: tenantName,
+      })
+      .single();
 
-    if (error) {
-      throw error;
+    if (error || !data) {
+      throw error || new Error("Failed to create organization");
     }
+    return data;
   } catch (error) {
-    
     const supabaseAdmin = await createAdminClient();
     await supabaseAdmin.auth.admin.deleteUser(id);
 
@@ -112,12 +119,12 @@ const signUpWithSupabase = async ({
     );
   }
 
-  await createTenant({ fullName, ...data.user });
+  return { data: await createTenant({ fullName, ...data.user }) };
 };
 
 export const signUpAction = async (
   formData: FormData
-): Promise<ServerResponse<SignUpSchemaType>> => {
+): Promise<ServerResponse<SignUpSchemaType, TenantRPCResponse>> => {
   try {
     const transformedData = transformFormData(formData);
     const validationResult = validateFormData(transformedData);
@@ -126,9 +133,10 @@ export const signUpAction = async (
       return validationResult;
     }
 
-    await signUpWithSupabase(validationResult);
+    const { data } = await signUpWithSupabase(validationResult);
     return {
       status: "success",
+      data,
       message:
         "Account created successfully. Please check your email to confirm.",
     };

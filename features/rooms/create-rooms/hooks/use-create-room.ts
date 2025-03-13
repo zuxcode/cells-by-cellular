@@ -4,6 +4,8 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { createRoomAction } from "../server/action/create-room-action";
 import { useImageUploaderStore } from "../stores/image-uploader-store";
+import { useCurrentService, useCurrentTenant } from "@/utils/store/tenant";
+import { ServerResponse } from "@/types/global-type";
 
 type OnSubmitHandler = (
   data: RoomSchemaType,
@@ -17,58 +19,84 @@ type UseCreateRoomReturn = {
 
 export const useCreateRoom = (): UseCreateRoomReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const { files } = useImageUploaderStore();
+  const { files, resetImage } = useImageUploaderStore();
 
-  const onSubmit = React.useCallback<OnSubmitHandler>(async (data, form) => {
-    setIsLoading(true);
-    const formData = new FormData();
+  const tenant = useCurrentTenant()!;
+  const service = useCurrentService()!;
 
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, String(value));
-    });
-    
-    files.forEach((fileWithId) => {
-      formData.append("files", fileWithId);
-    });
+  const validateContext = () => {
+    if (!tenant || !service) {
+      toast.error("Missing organization context");
+      return false;
+    }
+    return true;
+  };
 
+  const handleFormErrors = (
+    form: UseFormReturn<RoomSchemaType>,
+    result: ServerResponse<RoomSchemaType>
+  ) => {
+    if (result.fieldErrors) {
+      Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+        const key = field as keyof RoomSchemaType;
+        if (Object.keys(form.formState.errors).includes(key)) {
+          form.setError(key, { message: messages?.join(", ") });
+        }
+      });
+    }
+  };
 
-    try {
-      const result = await createRoomAction(formData);
+  const onSubmit = React.useCallback<OnSubmitHandler>(
+    async (data, form) => {
+      setIsLoading(true);
 
-      if (result.status === "success") {
-        toast.success(result.message);
-        form.reset();
+      if (!validateContext()) {
+        setIsLoading(false)
         return;
       }
 
-      if (result.fieldErrors) {
-        Object.entries(result.fieldErrors).forEach(([field, messages]) => {
-          if (Array.isArray(messages)) {
-            form.setError(field as keyof RoomSchemaType, {
-              type: "server",
-              message: messages.join(", "),
-            });
-          }
-        });
-      }
+      const formData = new FormData();
+      const { files: _, ...rest } = data;
 
-      if (result.message) {
-        form.setError("root", {
-          type: "server",
-          message: result.message,
-        });
-        toast.error(result.message);
+      Object.entries(rest).forEach(([key, value]) => {
+        formData.append(key, String(value));
+      });
+
+      files.forEach((file) => {
+        if (file instanceof File) {
+          formData.append("files", file);
+        }
+      });
+
+      formData.append("tenantId", tenant.id);
+      formData.append("serviceId", service.id);
+      formData.append("staffId", tenant.staffId);
+      formData.append("roleId", tenant.roleId);
+
+      try {
+        const result = await createRoomAction(formData);
+
+        if (result.status === "success") {
+          toast.success(result.message);
+          resetImage();
+          form.reset();
+          return;
+        }
+
+        handleFormErrors(form, result);
+        toast.error(result.message || "Operation failed");
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again."
+        );
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [files, tenant, service, resetImage]
+  );
 
   return { onSubmit, isLoading };
 };

@@ -57,6 +57,14 @@ const roomSchema = roomBaseSchema.extend({
   maxOccupancy: numericStringSchema("Maximum occupancy"),
 });
 
+const serverRoomSchema = roomSchema.extend({
+  tenantId: z.string().nonempty("Tenant id is required").uuid(),
+  roleId: z.string().nonempty("Role id is required").uuid(),
+  staffId: z.string().nonempty("Staff id is required").uuid(),
+  serviceId: z.string().nonempty("Service id is required").uuid(),
+});
+
 // Export the schema and enums
-export { roomSchema };
+export { roomSchema, serverRoomSchema };
 export type RoomSchemaType = z.infer<typeof roomSchema>;
+export type ServerRoomSchema = z.infer<typeof serverRoomSchema>;
