@@ -14,6 +14,7 @@ interface TenantRPCResponse {
   staff_id: string;
   role_id: string;
   tenant_id: string;
+  service_id: string;
 }
 
 const transformFormData = (formData: FormData) => {
@@ -69,7 +70,6 @@ const createTenant = async ({
         p_tenant_name: tenantName,
       })
       .single();
-
     if (error || !data) {
       throw error || new Error("Failed to create organization");
     }
@@ -141,7 +141,9 @@ export const signUpAction = async (
         "Account created successfully. Please check your email to confirm.",
     };
   } catch (error) {
-    return {
+
+      console.log(error);
+      return {
       status: "error",
       message:
         error instanceof Error
