@@ -125,6 +125,20 @@ export type Database = {
             referencedRelation: "base_roles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "base_staff_roles_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_staffs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "base_staff_roles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
         ]
       }
       hotel_rooms: {
@@ -207,13 +221,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "hotel_rooms_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "hotel_rooms_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
@@ -253,15 +260,7 @@ export type Database = {
           tenant_id?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_address_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tenant_biometrics: {
         Row: {
@@ -300,15 +299,7 @@ export type Database = {
           updated_at?: string
           website?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_biometrics_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tenant_contact: {
         Row: {
@@ -338,15 +329,7 @@ export type Database = {
           type?: Database["public"]["Enums"]["phone_enum"]
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_contact_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tenant_services: {
         Row: {
@@ -373,15 +356,7 @@ export type Database = {
           tenant_id?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_services_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tenant_social_media: {
         Row: {
@@ -408,15 +383,7 @@ export type Database = {
           updated_at?: string
           url?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_social_media_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tenant_staffs: {
         Row: {
@@ -442,13 +409,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tenant_staffs_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "tenant_staffs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -459,35 +419,30 @@ export type Database = {
       }
       tenants: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
+          is_public: boolean | null
           name: string
-          owner_id: string
-          updated_at: string
+          owner_id: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
+          is_public?: boolean | null
           name: string
-          owner_id: string
-          updated_at?: string
+          owner_id?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
+          is_public?: boolean | null
           name?: string
-          owner_id?: string
-          updated_at?: string
+          owner_id?: string | null
+          updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "tenants_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       user_addresses: {
         Row: {
@@ -662,7 +617,7 @@ export type Database = {
               staff_id: string
               role_id: string
               tenant_id: string
-              v_service_id: string
+              service_id: string
             }[]
           }
         | {
@@ -675,6 +630,16 @@ export type Database = {
             }
             Returns: undefined
           }
+      get_tenant_and_related: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          staff_id: string
+          role_id: string
+          tenant_id: string
+          service_id: string
+          service: string
+        }[]
+      }
     }
     Enums: {
       base_action_enum: "create" | "read" | "update" | "delete" | "manage"
@@ -701,31 +666,35 @@ export type Database = {
         | "Department Managers"
         | "Staff"
       bed_type:
-        | "Twin"
-        | "Full"
-        | "Queen"
-        | "King"
-        | "DoubleDouble"
-        | "SofaBed"
-        | "BunkBed"
-        | "MurphyBed"
-        | "Crib"
-        | "WaterBed"
+        | "twin"
+        | "full"
+        | "queen"
+        | "king"
+        | "double_double"
+        | "sofa_bed"
+        | "bunk_bed"
+        | "murphy_bed"
+        | "crib"
+        | "water_bed"
+        | "daybed"
         | "other"
       gender_enum: "male" | "female" | "other" | "prefer_not_to_say"
       phone_enum: "phone" | "telephone"
       room_status_enum: "commissioned" | "not_commissioned"
       room_type:
-        | "Single"
-        | "Double"
-        | "TwinShared"
-        | "Studio"
-        | "Suite"
-        | "Family"
-        | "Dormitory"
-        | "ADA"
-        | "Executive"
-        | "Connecting"
+        | "single"
+        | "double"
+        | "twin_shared"
+        | "studio"
+        | "suite"
+        | "family"
+        | "dormitory"
+        | "ada_accessible"
+        | "executive"
+        | "connecting"
+        | "loft"
+        | "penthouse"
+        | "cabana"
         | "other"
       service_enum:
         | "hotel"

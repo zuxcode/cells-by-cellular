@@ -6,6 +6,8 @@ import {
   SignInSchemaType,
 } from "@/features/auth/schemas/auth-schema";
 import { ServerResponse } from "@/types/global-type";
+import { Database } from "@/utils/supabase/db-type";
+type TenantRPCResponse = Database["public"]["Functions"]["get_tenant_and_related"]['Returns'];
 
 const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
@@ -27,6 +29,29 @@ const validateFormData = (data: unknown) => {
   return result.data;
 };
 
+const getTenantAndRelatedData = async () => {
+  const supabase = await createClient();
+  try {
+    const { data, error } = await supabase.rpc("get_tenant_and_related");
+
+    if (error || !data) {
+      throw error || new Error("No organization found");
+    }
+    return data;
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error &&
+      "message" in error &&
+      typeof error.message === "string"
+    ) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Failed to get organization");
+  }
+};
+
 const signInWithSupabase = async (email: string, password: string) => {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -34,6 +59,8 @@ const signInWithSupabase = async (email: string, password: string) => {
   if (error) {
     throw new Error(error?.message || "Sign in failed");
   }
+
+  return { data: await getTenantAndRelatedData() };
 };
 
 /**
@@ -41,7 +68,7 @@ const signInWithSupabase = async (email: string, password: string) => {
  */
 export const signInAction = async (
   formData: FormData
-): Promise<ServerResponse<SignInSchemaType>> => {
+): Promise<ServerResponse<SignInSchemaType, TenantRPCResponse>> => {
   try {
     const transformedData = transformFormData(formData);
     const validationResult = validateFormData(transformedData);
@@ -50,11 +77,15 @@ export const signInAction = async (
       return validationResult;
     }
 
-    await signInWithSupabase(validationResult.email, validationResult.password);
+    const { data } = await signInWithSupabase(
+      validationResult.email,
+      validationResult.password
+    );
 
     return {
       status: "success",
       message: "Signed in successfully",
+      data,
     };
   } catch (error) {
     console.log("error: ", error);

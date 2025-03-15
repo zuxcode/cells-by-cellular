@@ -25,7 +25,6 @@ const useSignUp = (): UseSignInReturn => {
   const router = useRouter();
   const { addTenant, selectTenant } = useTenantActions();
 
-
   const onSubmit = useCallback<OnSubmitHandler>(
     async (data, form) => {
       setIsLoading(true);
@@ -40,22 +39,24 @@ const useSignUp = (): UseSignInReturn => {
         const result = await signUpAction(formData);
         // Handle success
         if (result.status === "success") {
-           toast.success("Account created successfully!");
-           router.replace("/dashboard");
-           form.reset();
+          toast.success("Account created successfully!");
+          router.replace("/dashboard");
+          form.reset();
+
+          if (!result.data) return;
 
           addTenant({
             id: result.data.tenant_id,
-            staffId:  result.data.staff_id,
-            roleId:   result.data.role_id,
-	    service: {
-	       id: result.data.service_id,
-               name: "hotel"
-             }
+            staffId: result.data.staff_id,
+            roleId: result.data.role_id,
+            service: {
+              id: result.data.service_id,
+              name: "hotel",
+            },
           });
 
           selectTenant(result.data.tenant_id, result.data.service_id);
-      	  return;
+          return;
         }
 
         // Handle field errors
@@ -71,7 +72,7 @@ const useSignUp = (): UseSignInReturn => {
         }
 
         if (result.message) {
-        toast.error(result.message);
+          toast.error(result.message);
         }
       } catch (error) {
         toast.error(

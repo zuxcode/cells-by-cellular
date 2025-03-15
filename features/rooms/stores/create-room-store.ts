@@ -1,7 +1,7 @@
 import { FileWithId } from "@/types/global-type";
 import { create } from "zustand";
 interface CreateRoomStore {
-  sectionControl: "create" | "selected";
+  sectionControl: "create" | "selected" | "edit";
   setSectionControl: () => void;
   files: FileWithId[];
   setFiles: (files: File[]) => void;

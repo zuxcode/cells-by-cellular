@@ -2,8 +2,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { RoomBaseSchema } from "../type";
 
-import { dummyRooms } from "./dummy-data";
-
 type RoomStatus = RoomBaseSchema["roomStatus"];
 type BedType = RoomBaseSchema["bedType"];
 type RoomType = RoomBaseSchema["roomType"];
@@ -50,11 +48,13 @@ interface RoomStore {
 // );
 
 const useRoomStore = create<RoomStore>((set) => ({
-  rooms: dummyRooms, // [],
+  rooms:  [],
   selectedRoom: null,
-
-  setRooms: (rooms) => set({ rooms: [...rooms] }),
-
+  setRooms: (rooms) =>
+  set((state) => {
+    const newRooms = new Set([...state.rooms, ...rooms]);
+    return { rooms: Array.from(newRooms) };
+  }),
   setSelectedRoom: (id) => {
     set((state) => ({
       selectedRoom: state.rooms.find((room) => room.id === id),

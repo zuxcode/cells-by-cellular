@@ -179,7 +179,7 @@ function RoomImageCarousel() {
     <Carousel images={selectedRoom.imageUrl}>
       <Carousel.Main />
 
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center  gap-2">
         <Carousel.PrevButton />
         <Carousel.Thumbnails windowSize={3} />
         <Carousel.NextButton />

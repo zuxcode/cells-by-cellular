@@ -116,7 +116,7 @@ function RoomCardStatus() {
     <div
       className={cn(
         "absolute md:relative md:top-0 md:left-0 top-4 left-4 px-2 py-1 text-sm font-medium rounded-md",
-        room.status === "Not-commissioned"
+        room.status === "not_commissioned"
           ? "bg-red-100 text-red-600"
           : "bg-[#F1FFF6] text-[#03432F]"
       )}

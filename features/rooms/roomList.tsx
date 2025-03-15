@@ -20,21 +20,13 @@ interface RoomCardListProps {
 function RoomCardList({ roomsFromServerComponent }: RoomCardListProps) {
   const isMobile = useIsMobile();
   const { sectionControl } = useCreateRoomStore();
-  const { rooms, setSelectedRoom } = useRoomStore();
-
-  // const { rooms, setSelectedRoom, setRooms, selectedRoom } = store?.rooms;
-  // console.log("rooms: ", rooms);
+  const { rooms, setSelectedRoom, setRooms } = useRoomStore();
 
   // Sync rooms from server component with the store
-  // React.useEffect(() => {
-  //   setRooms(roomsFromServerComponent);
-  // }, [roomsFromServerComponent, setRooms]);
+   React.useEffect(() => {
+     setRooms(roomsFromServerComponent);
+   }, [roomsFromServerComponent, setRooms]);
 
-  // const handleKeyDown = (id: string) => (e: React.KeyboardEvent) => {
-  //   if (e.key === "Enter" || e.key === " ") {
-  //     setSelectedRoom(id);
-  //   }
-  // };
 
   // Hide the list on mobile when showing add room section or a room is selected
   // console.log("isMobile: ", isMobile);

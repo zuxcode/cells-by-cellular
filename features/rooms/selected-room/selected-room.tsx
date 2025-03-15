@@ -22,7 +22,7 @@ const features = ["Wi-Fi", "TV", "Heating", "Air Conditioning"];
 
 function SelectedRoom() {
   const { selectedRoom } = useRoomStore();
-  const { sectionControl } = useCreateRoomStore();
+  const { sectionControl, setSectionControl } = useCreateRoomStore();
 
   if (sectionControl !== "selected") return null;
 
@@ -40,13 +40,17 @@ function SelectedRoom() {
           {title}
         </CardTitle>
 
-        <Button className="bg-neutral-600 px-4 w-1/5">Edit</Button>
+        <Button 
+         onClick={ setSectionControl }  
+         className="bg-neutral-600 px-4 w-1/5">
+           Edit
+      </Button>
       </CardHeader>
       <Separator />
 
       <CardContent className="p-2 grid gap-4">
         <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-row w-[70%] items-center">
+          <div className="flex flex-row w-[60%] items-center">
             <Image
               alt="tag"
               src="/svg/price-tag.svg"
@@ -57,7 +61,7 @@ function SelectedRoom() {
             <p className="text-black text-sm">Price: {price}/Night</p>
           </div>
 
-          <div className="w-[30%]">
+          <div className="w-[40%]">
             <p
               className={cn(
                 "text-sm px-2 py-1 font-medium rounded-md",

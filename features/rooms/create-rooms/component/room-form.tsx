@@ -33,7 +33,7 @@ import { useCreateRoom } from "../hooks/use-create-room";
 import { Uploader } from "./uploader";
 
 function CreateRoomForm() {
-  const { onSubmit, isLoading } = useCreateRoom();
+  const { onSubmit, isLoading, sectionControl } = useCreateRoom();
   const form = useForm<RoomSchemaType>({
     mode: "all",
     resolver: zodResolver(roomSchema),
@@ -42,8 +42,8 @@ function CreateRoomForm() {
       number: "",
       price: "",
       description: "",
-      bedType: "single",
-      roomStatus: "Commissioned",
+      bedType: "water_bed",
+      roomStatus: "commissioned",
       roomSize: "",
       bedsCount: "1",
       maxOccupancy: "1",

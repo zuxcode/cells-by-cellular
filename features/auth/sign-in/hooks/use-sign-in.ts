@@ -4,6 +4,7 @@ import { signInAction } from "../server/actions/sign-in-action";
 import toast from "react-hot-toast";
 import React, { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTenantActions } from "@/utils/store/tenant";
 
 type OnSubmitHandler = (
   data: SignInSchemaType,
@@ -21,6 +22,7 @@ type UseSignInReturn = {
  */
 const useSignIn = (): UseSignInReturn => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const { addTenant, selectTenant } = useTenantActions();
   const router = useRouter();
 
   const onSubmit = useCallback<OnSubmitHandler>(async (data, form) => {
@@ -39,6 +41,26 @@ const useSignIn = (): UseSignInReturn => {
         toast.success("Signed in successfully!");
         router.replace("/dashboard");
         form.reset();
+
+        const { data } = result;
+
+        if (!data) return;
+        const { service_id, tenant_id } = data[0];
+
+        for (const result of data) {
+          if (result.service_id !== service_id) return;
+          addTenant({
+            id: result.tenant_id,
+            staffId: result.staff_id,
+            roleId: result.role_id,
+            service: {
+              id: result.service_id,
+              name: result.service_id,
+            },
+          });
+        }
+
+        selectTenant(tenant_id, service_id);
         return;
       }
 

@@ -13,7 +13,7 @@ function CreateRoomCard() {
     <Card className="bg-neutral-050 w-full">
       <CardHeader className="px-0 p-2">
         <CardTitle className="text-lg px-6 font-extrabold text-green-forest">
-          Add New
+          {sectionControl === "create" ?  "Add New" : "Edit" }
         </CardTitle>
 
         <svg width="100%" height="20" className="px-2">

@@ -11,6 +11,7 @@
         "SQLERRM",
         "subcomponent",
         "subcomponents",
+        "tenantid",
         "tiktok"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"

@@ -1,8 +1,8 @@
 [?25l
     Select a project:                                                                             
                                                                                                   
-  >  1. tnmuybjxosdtfjoumuav [name: dove, org: szsuppzstxsthrsewolr, region: eu-central-1]        
-    2. lhzdvvcrabxwumfyrski [name: cells, org: szsuppzstxsthrsewolr, region: eu-west-2]           
+  >  1. lhzdvvcrabxwumfyrski [name: cells, org: szsuppzstxsthrsewolr, region: eu-west-2]          
+    2. tnmuybjxosdtfjoumuav [name: dove, org: szsuppzstxsthrsewolr, region: eu-central-1]         
     3. zagkxmqtlmdwmeoendbt [name: obarmart-main, org: vcovfgonijdhmgxrbntv, region: eu-central-1]
     4. gosenjrmkbnmwpxxishw [name: Cells, org: vcovfgonijdhmgxrbntv, region: eu-west-2]           
     5. ivbtlbqhonegdgdrypmw [name: obarmart, org: vcovfgonijdhmgxrbntv, region: eu-central-1]     
@@ -18,12 +18,13 @@
   p_middle_name TEXT,  
   p_last_name TEXT,
   p_tenant_name TEXT
-) RETURNS TABLE (staff_id UUID, role_id UUID, tenant_id UUID) AS $$
+) RETURNS TABLE (staff_id UUID, role_id UUID, tenant_id UUID, service_id UUID) AS $$
 DECLARE
   v_user_id UUID;  -- Single UUID for all user references
   v_tenant_id UUID;
   v_staff_id UUID;
   v_role_id UUID;
+  v_service_id UUID;
 BEGIN
 
  SELECT auth.uid() INTO v_user_id;
@@ -43,7 +44,8 @@ BEGIN
   RETURNING id INTO v_tenant_id;
 
   INSERT INTO tenant_services (tenant_id, service, is_primary)
-  VALUES (v_tenant_id, 'hotel', TRUE);
+  VALUES (v_tenant_id, 'hotel', TRUE) 
+  RETURNING id INTO v_service_id;
 
   -- Link user to tenant as staff
   INSERT INTO tenant_staffs (tenant_id, user_id)
@@ -63,7 +65,7 @@ BEGIN
   INSERT INTO base_staff_roles (staff_id, role_id, tenant_id)
   VALUES (v_staff_id, v_role_id, v_tenant_id);
 
-  RETURN QUERY SELECT v_staff_id, v_role_id, v_tenant_id;
+  RETURN QUERY SELECT v_staff_id, v_role_id, v_tenant_id, v_service_id;
 
 EXCEPTION
   WHEN OTHERS THEN
@@ -71,3 +73,5 @@ EXCEPTION
                     SQLERRM, SQLSTATE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
