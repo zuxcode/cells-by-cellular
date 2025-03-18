@@ -1,7 +1,6 @@
 import { contactLocationSchema, userBaseSchema } from "@/utils/zod-schema";
 import { z } from "zod";
-
-export const ROOMS = ["single", "double", "suite", "deluxe", "family"] as const;
+import { roomType } from "@/types/global-type";
 
 export const ID_TYPES = [
   "Passport",
@@ -81,7 +80,7 @@ const reservationSchema = z
         }
       }),
 
-    roomType: z.enum(ROOMS, {
+    roomType: z.enum(roomType, {
       errorMap: () => ({ message: "Please select a valid room type" }),
     }),
   })

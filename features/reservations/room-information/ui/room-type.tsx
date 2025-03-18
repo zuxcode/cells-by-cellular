@@ -1,5 +1,3 @@
-"use client";
-
 import {
   FormControl,
   FormField,
@@ -15,7 +13,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormProps } from "../types/type";
-import { roomType } from "@/types/global-type";
+import { createClient } from "@/utils/supabase/client";
+import React from "react";
+
+function RoomTypeList() {
+  const [roomTypes, setRoomTypes] = React.useState([]);
+
+  const getRoomTypes = async () => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("hotel_rooms")
+      .select("room_type", { distinct: true });
+
+    if (error || !data) return;
+
+    setRoomTypes(data);
+  };
+
+  React.useEffect(() => {
+    getRoomTypes();
+  }, [roomTypes, setRoomTypes]);
+
+  return (
+    <>
+      {roomTypes.map(({ room_type }) => (
+        <SelectItem key={room_type} value={room_type}>
+          {room_type}
+        </SelectItem>
+      ))}
+    </>
+  );
+}
+
+const MemoizedRoomTypeList = React.memo(RoomTypeList);
 
 function RoomType(form: FormProps) {
   return (
@@ -34,9 +64,7 @@ function RoomType(form: FormProps) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {roomType.flatMap((value) => (
-                <SelectItem key={value} value={value}>{value}</SelectItem>
-              ))}
+              <MemoizedRoomTypeList />
             </SelectContent>
           </Select>
           <FormMessage />

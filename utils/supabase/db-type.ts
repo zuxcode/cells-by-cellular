@@ -141,6 +141,136 @@ export type Database = {
           },
         ]
       }
+      checkout: {
+        Row: {
+          amount: number
+          created_at: string
+          guest_contact_details_id: string
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method_enum"]
+          payment_status: Database["public"]["Enums"]["payment_status_enum"]
+          reservation_id: string
+          tenant_id: string
+          transaction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          guest_contact_details_id: string
+          id?: string
+          payment_method: Database["public"]["Enums"]["payment_method_enum"]
+          payment_status?: Database["public"]["Enums"]["payment_status_enum"]
+          reservation_id: string
+          tenant_id: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          guest_contact_details_id?: string
+          id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method_enum"]
+          payment_status?: Database["public"]["Enums"]["payment_status_enum"]
+          reservation_id?: string
+          tenant_id?: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amount_matches_reservation"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_guest_contact_details_id_fkey"
+            columns: ["guest_contact_details_id"]
+            isOneToOne: false
+            referencedRelation: "guest_contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_contact_details: {
+        Row: {
+          address: string
+          city_or_town: string
+          country_of_residence: string
+          dob: string
+          email: string
+          first_name: string
+          id: string
+          id_card_url: string
+          id_type: Database["public"]["Enums"]["id_type_enum"]
+          last_name: string
+          middle_name: string | null
+          nationality: string
+          phone_number: string
+          postal_code: string
+          tenant_id: string
+        }
+        Insert: {
+          address: string
+          city_or_town: string
+          country_of_residence: string
+          dob: string
+          email: string
+          first_name: string
+          id?: string
+          id_card_url: string
+          id_type?: Database["public"]["Enums"]["id_type_enum"]
+          last_name: string
+          middle_name?: string | null
+          nationality: string
+          phone_number: string
+          postal_code: string
+          tenant_id: string
+        }
+        Update: {
+          address?: string
+          city_or_town?: string
+          country_of_residence?: string
+          dob?: string
+          email?: string
+          first_name?: string
+          id?: string
+          id_card_url?: string
+          id_type?: Database["public"]["Enums"]["id_type_enum"]
+          last_name?: string
+          middle_name?: string | null
+          nationality?: string
+          phone_number?: string
+          postal_code?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_contact_details_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hotel_rooms: {
         Row: {
           bed_max: number
@@ -225,6 +355,66 @@ export type Database = {
             columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "tenant_staffs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservations: {
+        Row: {
+          adults: number
+          check_in: string
+          check_out: string
+          children: number
+          created_at: string
+          id: string
+          room_id: string
+          special_requests: string | null
+          status: Database["public"]["Enums"]["reservation_status_enum"]
+          tenant_id: string
+          total_price: number
+          updated_at: string
+        }
+        Insert: {
+          adults: number
+          check_in: string
+          check_out: string
+          children?: number
+          created_at?: string
+          id?: string
+          room_id: string
+          special_requests?: string | null
+          status?: Database["public"]["Enums"]["reservation_status_enum"]
+          tenant_id: string
+          total_price: number
+          updated_at?: string
+        }
+        Update: {
+          adults?: number
+          check_in?: string
+          check_out?: string
+          children?: number
+          created_at?: string
+          id?: string
+          room_id?: string
+          special_requests?: string | null
+          status?: Database["public"]["Enums"]["reservation_status_enum"]
+          tenant_id?: string
+          total_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "hotel_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -605,6 +795,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_booking: {
+        Args: {
+          p_tenant_id: string
+          p_first_name: string
+          p_last_name: string
+          p_email: string
+          p_dob: string
+          p_phone_number: string
+          p_nationality: string
+          p_country_of_residence: string
+          p_postal_code: string
+          p_address: string
+          p_city_or_town: string
+          p_id_type: Database["public"]["Enums"]["id_type_enum"]
+          p_id_card_url: string
+          p_room_id: string
+          p_check_in: string
+          p_check_out: string
+          p_adults: number
+          p_children: number
+          p_total_price: number
+          p_special_requests: string
+          p_payment_method: Database["public"]["Enums"]["payment_method_enum"]
+          p_amount: number
+          p_transaction_id: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["api_response"]
+      }
       create_tenant_and_related:
         | {
             Args: {
@@ -639,6 +857,19 @@ export type Database = {
           service_id: string
           service: string
         }[]
+      }
+      is_tenant_admin: {
+        Args: {
+          tenant_id: string
+          required_role?: Database["public"]["Enums"]["base_role_enum"]
+        }
+        Returns: boolean
+      }
+      is_tenant_super_admin: {
+        Args: {
+          tenant_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
@@ -679,7 +910,20 @@ export type Database = {
         | "daybed"
         | "other"
       gender_enum: "male" | "female" | "other" | "prefer_not_to_say"
+      id_type_enum:
+        | "national_identification"
+        | "passport"
+        | "driver_license"
+        | "other"
+      payment_method_enum: "cash" | "pos" | "bank_transfer"
+      payment_status_enum: "pending" | "paid" | "failed" | "refunded"
       phone_enum: "phone" | "telephone"
+      reservation_status_enum:
+        | "pending"
+        | "confirmed"
+        | "checked_in"
+        | "checked_out"
+        | "cancelled"
       room_status_enum: "commissioned" | "not_commissioned"
       room_type:
         | "single"
@@ -715,7 +959,13 @@ export type Database = {
         | "pinterest"
     }
     CompositeTypes: {
-      [_ in never]: never
+      api_response: {
+        success: boolean | null
+        message: string | null
+        guest_id: string | null
+        reservation_id: string | null
+        checkout_id: string | null
+      }
     }
   }
 }

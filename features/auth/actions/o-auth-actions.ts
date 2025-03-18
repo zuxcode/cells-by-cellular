@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/server";
 import { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-// import { logger } from "@/utils/logger"; // Assuming a logger utility exists
 
 /**
  * Handles OAuth sign-in for a given provider.
@@ -17,7 +16,6 @@ async function handleOAuthSignIn(provider: Provider): Promise<ServerResponse> {
   const supabase = await createClient();
 
   if (!origin) {
-    // logger.error("Origin header is missing");
     return { status: "error", message: "Origin header is missing" };
   }
 
@@ -30,14 +28,12 @@ async function handleOAuthSignIn(provider: Provider): Promise<ServerResponse> {
     });
 
     if (error) {
-      // logger.error(`${provider} OAuth error:`, error.message);
       return { status: "error", message: error.message };
     }
 
     // Redirect to dashboard on success
     redirect("/dashboard");
   } catch (error) {
-    // logger.error(`Unexpected error during ${provider} OAuth:`, error);
     return {
       status: "error",
       message: "An unexpected error occurred. Please try again.",

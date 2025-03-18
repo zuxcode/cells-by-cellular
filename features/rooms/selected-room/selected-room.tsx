@@ -30,7 +30,7 @@ function SelectedRoom() {
     return <div>Select a room to view details</div>;
   }
 
-  const { title, status, price, bedType, roomSize, maxGuests, description } =
+  const { title, status, price, bedType, roomSize, maxGuests, description,  } =
     selectedRoom;
 
   return (
