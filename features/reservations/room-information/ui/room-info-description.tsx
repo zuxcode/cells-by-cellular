@@ -3,9 +3,12 @@
 import { CardContent } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import Image from "next/image";
-import { FormProps } from "../types/type";
+import { useFormContext } from "react-hook-form";
 
-function RoomInfoDescription(form: FormProps) {
+
+function RoomInfoDescription() {
+  const method = useFormContext();
+
   return (
     <div className="space-y-1">
       <p className="text-small text-neutral-600 font-semibold">
@@ -68,7 +71,7 @@ function RoomInfoDescription(form: FormProps) {
             Bed Name
           </span>
           <span className="text-small text-neutral-600 font-semibold">
-            {form.getValues("roomType")}
+            {method.getValues("roomType")}
           </span>
         </div>
 

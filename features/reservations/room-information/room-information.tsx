@@ -11,9 +11,9 @@ import { CheckInOutField } from "./ui/check-in-out-field";
 import { RoomInfoDescription } from "./ui/room-info-description";
 import { RoomType } from "./ui/room-type";
 import { RoomInfoFooter } from "./ui/room-info-footer";
-import { FormProps } from "./types/type";
+import { RoomTypeList } from "./ui/room-type-list";
 
-function RoomDetailsCard(form: FormProps) {
+function RoomDetailsCard() {
   return (
     <Card className="shadow-md">
       <CardHeader className="p-4">
@@ -24,11 +24,13 @@ function RoomDetailsCard(form: FormProps) {
       <CardContent className="p-4 pt-0 space-y-4">
         <div className="space-y-4">
           <div className="space-y-1">
-            <RoomType {...form} />
+            <RoomType>
+              <RoomTypeList />
+            </RoomType>
           </div>
 
           <div className="flex justify-between">
-            <CheckInOutField {...form} />
+            <CheckInOutField />
             <div className="w-1/4">
               <GuestCounterProvider>
                 <GuestCounterLabel icon={Users}>Guests</GuestCounterLabel>
@@ -38,7 +40,7 @@ function RoomDetailsCard(form: FormProps) {
           </div>
         </div>
 
-        <RoomInfoDescription {...form} />
+        <RoomInfoDescription />
 
         <RoomInfoFooter />
       </CardContent>

@@ -1,5 +1,9 @@
-import { Reservations } from "@/features/reservations";
+import { Reservations, ReservationFormProvider } from "@/features/reservations";
 
 export default function Page() {
-  return <Reservations />;
+  return (
+    <ReservationFormProvider>
+      <Reservations />
+    </ReservationFormProvider>
+  );
 }

@@ -10,16 +10,18 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
-import { FormProps } from "../types/type";
+import { useFormContext } from "react-hook-form";
 
-function CheckInOutField(form: FormProps) {
+function CheckInOutField() {
+  const method = useFormContext();
+
   return (
     <div className="w-1/2 space-y-1">
       <p className="text-small text-neutral-600 font-semibold">
         Check In-Out Date
       </p>
       <FormField
-        control={form.control}
+        control={method.control}
         name="checkInOutDate"
         render={({ field }) => (
           <FormItem className="">
@@ -33,7 +35,7 @@ function CheckInOutField(form: FormProps) {
                     {field.value?.from ? (
                       field.value.to ? (
                         <>
-                          {format(field.value.from, "d/MM/y")} -{" "}
+                          {format(field.value.from, "d/MM")} -{" "}
                           {format(field.value.to, "d/MM/y")}
                         </>
                       ) : (

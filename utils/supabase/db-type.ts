@@ -848,6 +848,30 @@ export type Database = {
             }
             Returns: undefined
           }
+      get_distinct_rooms: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          tenant_id: string
+          service_id: string
+          name: string
+          number: number
+          guest_max: number
+          bed_max: number
+          bed_type: Database["public"]["Enums"]["bed_type"]
+          room_type: Database["public"]["Enums"]["room_type"]
+          size: number
+          status: Database["public"]["Enums"]["room_status_enum"]
+          price: number
+          description: string
+          features: Json
+          image_urls: string[]
+          created_at: string
+          updated_at: string
+          created_by: string
+          updated_by: string
+        }[]
+      }
       get_tenant_and_related: {
         Args: Record<PropertyKey, never>
         Returns: {
