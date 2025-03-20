@@ -1,4 +1,4 @@
-"use strict";
+"use client";
 
 import {
   FormControl,
@@ -24,7 +24,7 @@ function RoomType({ children }: React.PropsWithChildren) {
       name="roomType"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-small text-neutral-600 font-semibold">
+          <FormLabel className="text-xs text-neutral-600 font-semibold">
             Choose Room
           </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>

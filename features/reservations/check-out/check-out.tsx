@@ -11,10 +11,9 @@ import {
   SectionContent,
   SectionParagraph,
 } from "./blocks/block";
-import { FormProps } from "../room-information/types/type";
 import toast from "react-hot-toast";
 
-function CheckOut(form: FormProps) {
+function CheckOut() {
   return (
     <Card className="shadow-md border-black bg-canvas-cool">
       <CardHeader className="pt-4 px-2 pb-0">
@@ -23,7 +22,7 @@ function CheckOut(form: FormProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0 pb-4 space-y-2">
-        <Description {...form} />
+        <Description  />
         <Separator />
 
         <SectionContainer className="px-2">

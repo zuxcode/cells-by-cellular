@@ -1,3 +1,5 @@
+"use client"
+
 import csc from "countries-states-cities";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -25,13 +27,18 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
+import { useFormContext } from "react-hook-form";
 
 import { GENDERS } from "@/utils/zod-schema";
 import { keyExtractor } from "@/utils/key-extractor";
-import { FormProps } from "../room-information/types/type";
 import { ID_TYPES } from "../server/schema/reservation-schema";
+import { useRoom } from "@/utils/store/room-store";
 
-function ContactDetails(form: FormProps) {
+function ContactDetails() {
+  const method = useFormContext();
+  // const targetRoomId = method.getValues("roomType");
+  // const room = useRoom(targetRoomId);
+  
   return (
     <Card className="shadow-md">
       <CardHeader className="p-4">
@@ -42,15 +49,15 @@ function ContactDetails(form: FormProps) {
       <CardContent className="p-4 pt-0 space-y-4">
         <div className="flex gap-4">
           <FormField
-            control={form.control}
+            control={method.control}
             name="firstName"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <Input
                     placeholder="First Name"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -60,15 +67,15 @@ function ContactDetails(form: FormProps) {
             )}
           />
           <FormField
-            control={form.control}
+            control={method.control}
             name="lastName"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <Input
                     placeholder="Last Name"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -81,15 +88,15 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="middleName"
             render={({ field }) => (
               <FormItem className="w-[60%]">
                 <FormControl>
                   <Input
                     placeholder="Middle Name"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -99,7 +106,7 @@ function ContactDetails(form: FormProps) {
             )}
           />
           <FormField
-            control={form.control}
+            control={method.control}
             name="gender"
             render={({ field }) => (
               <FormItem className="w-[40%]">
@@ -127,15 +134,15 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="email"
             render={({ field }) => (
               <FormItem className="w-[70%]">
                 <FormControl>
                   <Input
                     placeholder="Email"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -145,7 +152,7 @@ function ContactDetails(form: FormProps) {
             )}
           />
           <FormField
-            control={form.control}
+            control={method.control}
             name="dateOfBirth"
             render={({ field }) => (
               <FormItem className="w-[30%]">
@@ -184,15 +191,15 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="phoneNumber"
             render={({ field }) => (
               <FormItem className="w-[60%]">
                 <FormControl>
                   <Input
                     placeholder="Phone Number"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -202,7 +209,7 @@ function ContactDetails(form: FormProps) {
             )}
           />
           <FormField
-            control={form.control}
+            control={method.control}
             name="nationality"
             render={({ field }) => (
               <FormItem className="w-[40%]">
@@ -230,14 +237,14 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="country"
             render={({ field }) => (
               <FormItem className="w-[60%]">
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
-                    form.resetField("state");
+                    method.resetField("state");
                   }}
                   defaultValue={field.value}
                 >
@@ -264,15 +271,15 @@ function ContactDetails(form: FormProps) {
           />
 
           <FormField
-            control={form.control}
+            control={method.control}
             name="postalCode"
             render={({ field }) => (
               <FormItem className="w-[40%]">
                 <FormControl>
                   <Input
                     placeholder="Postal Code"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -285,15 +292,15 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="address"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
                   <Textarea
                     placeholder="Address"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     autoComplete="street-address"
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969] min-h-2 resize-none"
                     {...field}
@@ -307,15 +314,15 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="city"
             render={({ field }) => (
               <FormItem className="w-1/2">
                 <FormControl>
                   <Input
                     placeholder="City/Town"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -325,7 +332,7 @@ function ContactDetails(form: FormProps) {
             )}
           />
           <FormField
-            control={form.control}
+            control={method.control}
             name="state"
             render={({ field }) => (
               <FormItem className="w-1/2">
@@ -335,7 +342,7 @@ function ContactDetails(form: FormProps) {
                 >
                   <FormControl>
                     <SelectTrigger
-                      disabled={!form.getValues("country")}
+                      disabled={!method.getValues("country")}
                       className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] text-[#696969]"
                     >
                       <SelectValue placeholder="State" />
@@ -343,7 +350,7 @@ function ContactDetails(form: FormProps) {
                   </FormControl>
                   <SelectContent>
                     {csc
-                      .getStatesOfCountry(Number(form.getValues("country")))
+                      .getStatesOfCountry(Number(method.getValues("country")))
                       .map((option) => (
                         <SelectItem key={option.state_code} value={option.name}>
                           {option.name}
@@ -358,7 +365,7 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="idType"
             render={({ field }) => (
               <FormItem className="w-[40%]">
@@ -387,15 +394,15 @@ function ContactDetails(form: FormProps) {
           />
 
           <FormField
-            control={form.control}
+            control={method.control}
             name="idNumber"
             render={({ field }) => (
               <FormItem className="w-[60%]">
                 <FormControl>
                   <Input
                     placeholder="ID Number"
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />
@@ -408,7 +415,7 @@ function ContactDetails(form: FormProps) {
 
         <div className="flex gap-4 w-full">
           <FormField
-            control={form.control}
+            control={method.control}
             name="idDocument"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -416,8 +423,8 @@ function ContactDetails(form: FormProps) {
                   <Input
                     type="file"
                     placeholder="Browse..."
-                    disabled={form.formState.isSubmitting}
-                    aria-disabled={form.formState.isSubmitting}
+                    disabled={method.formState.isSubmitting}
+                    aria-disabled={method.formState.isSubmitting}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
                     {...field}
                   />

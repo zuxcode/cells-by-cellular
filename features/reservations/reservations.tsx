@@ -11,11 +11,13 @@ function Reservations() {
       </div>
 
       {/* Contact Details - 45% Width */}
-      <div className="w-full md:w-[45%]">{/* <ContactDetails /> */}</div>
+      <div className="w-full md:w-[45%]">
+        <ContactDetails />
+      </div>
 
       {/* Checkout - 35% Width */}
       <div className="w-full md:w-[35%] md:sticky md:top-4">
-        {/* <CheckOut /> */}
+        <CheckOut />
       </div>
     </div>
   );

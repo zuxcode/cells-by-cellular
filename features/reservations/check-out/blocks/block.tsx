@@ -26,7 +26,7 @@ function SectionParagraph({
   className,
 }: React.PropsWithChildren & React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={cn("text-small text-neutral-600 text-pretty", className)}>
+    <p className={cn("text-xs text-neutral-600 text-pretty", className)}>
       {children}
     </p>
   );

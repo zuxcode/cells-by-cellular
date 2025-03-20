@@ -31,9 +31,9 @@ function RoomDetailsCard() {
 
           <div className="flex justify-between">
             <CheckInOutField />
-            <div className="w-1/4">
+            <div>
               <GuestCounterProvider>
-                <GuestCounterLabel icon={Users}>Guests</GuestCounterLabel>
+                <GuestCounterLabel>Guests</GuestCounterLabel>
                 <GuestCounterControls name="maxOccupancy" />
               </GuestCounterProvider>
             </div>

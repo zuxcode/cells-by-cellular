@@ -1,16 +1,17 @@
+"use client" 
+
 import { SelectItem } from "@/components/ui/select";
-import { createClient } from "@/utils/supabase/client";
+import { useRoomStore, useRoomActions } from "@/utils/store/room-store";
 
-async function RoomTypeList() {
-  const supabase = createClient();
+const RoomTypeList: React.FC = () => {
+  const { roomIds } = useRoomStore();
+  const { getRoomById } = useRoomActions();
 
-  const { data, error } = await supabase.rpc("get_distinct_rooms");
+  const data = roomIds
+    .map((roomId) => getRoomById(roomId))
+    .filter((room) => room !== undefined);
 
-  if (error) {
-    return null;
-  }
-
-  if (!data || data.length === 0) {
+  if (data.length === 0) {
     return (
       <SelectItem disabled value="none">
         No room types available
@@ -20,13 +21,13 @@ async function RoomTypeList() {
 
   return (
     <>
-      {data.map(({ room_type }) => (
-        <SelectItem key={room_type} value={room_type}>
+      {data.map(({ room_type, id }) => (
+        <SelectItem key={id} value={id}>
           {room_type}
         </SelectItem>
       ))}
     </>
   );
-}
+};
 
 export { RoomTypeList };

@@ -1,44 +1,44 @@
 "use client";
 
 import { CardContent } from "@/components/ui/card";
+import { getStatusColor } from "@/features/rooms/utils/get-status-color";
+import { cn } from "@/lib/utils";
+import { useRoom } from "@/utils/store/room-store";
 import { Users } from "lucide-react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 
-
 function RoomInfoDescription() {
   const method = useFormContext();
+  const targetRoomId = method.getValues("roomType");
+  const room = useRoom(targetRoomId);
 
   return (
     <div className="space-y-1">
-      <p className="text-small text-neutral-600 font-semibold">
-        Room Description
-      </p>
+      <p className="text-xs text-neutral-600 font-semibold">Room Description</p>
       <CardContent className="p-4 bg-canvas-cool shadow-md space-y-2">
         <div className="flex items-center gap-3">
           <Image
             alt="Price"
             src="/svg/price-tag.svg"
-            className="h-5 w-5"
+            className="h-4 w-4"
             width={20}
             height={20}
           />
-          <span className="text-small text-neutral-600 font-semibold">
-            Price:
-          </span>
-          <span className="text-green-forest text-small font-extrabold">
-            N120,000 /Night
+          <span className="text-xs text-neutral-600 font-semibold">Price:</span>
+          <span className="text-green-forest text-xs font-extrabold">
+            N{room?.price}/Night
           </span>
         </div>
 
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-3">
-            <Users className="h-5 w-5 text-neutral-600" />
-            <span className="text-small text-neutral-600 font-semibold">
+            <Users className="h-4 w-4 text-neutral-600" />
+            <span className="text-xs text-neutral-600 font-semibold">
               Max Guest:
             </span>
-            <span className="text-white text-small bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
-              3 {/** @todo: Replace with dynamic value */}
+            <span className="text-white text-xs bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
+              {room?.guest_max}
             </span>
           </div>
 
@@ -46,15 +46,13 @@ function RoomInfoDescription() {
             <Image
               alt="tag"
               src="/svg/bed.svg"
-              className="h-5 w-5"
+              className="h-4 w-4"
               width={20}
               height={20}
             />
-            <span className="text-small text-neutral-600 font-semibold">
-              Bed:
-            </span>
-            <span className="text-white text-small bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
-              3 {/** @todo: Replace with dynamic value */}
+            <span className="text-xs text-neutral-600 font-semibold">Bed:</span>
+            <span className="text-white text-xs bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
+              {room?.bed_max}
             </span>
           </div>
         </div>
@@ -63,15 +61,15 @@ function RoomInfoDescription() {
           <Image
             alt="tag"
             src="/svg/bed.svg"
-            className="h-5 w-5"
+            className="h-4 w-4"
             width={20}
             height={20}
           />
-          <span className="text-small text-neutral-600 font-semibold">
+          <span className="text-xs text-neutral-600 font-semibold">
             Bed Name
           </span>
-          <span className="text-small text-neutral-600 font-semibold">
-            {method.getValues("roomType")}
+          <span className="text-xs text-neutral-600 font-semibold">
+            {room?.bed_type}
           </span>
         </div>
 
@@ -79,15 +77,20 @@ function RoomInfoDescription() {
           <Image
             alt="Price"
             src="/svg/status-info.svg"
-            className="h-5 w-5"
+            className="h-4 w-4"
             width={20}
             height={20}
           />
-          <span className="text-small text-neutral-600 font-semibold">
+          <span className="text-xs text-neutral-600 font-semibold">
             Condition:
           </span>
-          <span className="text-green-forest text-small font-extrabold">
-            Commissioned
+          <span
+            className={cn(
+              "text-green-forest text-xs font-extrabold",
+              getStatusColor(room ? room.status : "commissioned")
+            )}
+          >
+            {room?.status}
           </span>
         </div>
 
@@ -95,16 +98,16 @@ function RoomInfoDescription() {
           <Image
             alt="Price"
             src="/svg/note.svg"
-            className="h-5 w-5"
+            className="h-4 w-4"
             width={20}
             height={20}
           />
 
           <div className="flex flex-col">
-            <span className="text-small text-neutral-600 font-semibold">
+            <span className="text-xs text-neutral-600 font-semibold">
               Facility Notes:
             </span>
-            <span className="text-neutral-600 text-small font-medium ">
+            <span className="text-neutral-600 text-xs font-medium ">
               Ac not working properly, Wash hand Basin not rushing, AC only
               comes up by 1AM
             </span>

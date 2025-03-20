@@ -3,7 +3,7 @@ import { RoomHeader } from "@/features/rooms";
 import { CreateRoomCard } from "@/features/rooms/create-rooms";
 import { SelectedRoom } from "@/features/rooms/selected-room";
 
-function RoomsLayout({ children }: React.PropsWithChildren) {
+async function RoomsLayout({ children }: React.PropsWithChildren) {
   return (
     <section className="w-full pl-4 md:pl-11 pr-4 pt-4 flex flex-col gap-4 bg-canvas-cool">
       <RoomHeader />
