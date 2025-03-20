@@ -8,7 +8,7 @@ export default async function Layout({ children }: React.PropsWithChildren) {
     <AppSidebar />
     <SidebarInset>
       <Header />
-      <div>{children}</div>
+      <div className="h-full">{children}</div>
     </SidebarInset>
   </SidebarProvider>
   );

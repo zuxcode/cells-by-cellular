@@ -1,6 +1,6 @@
 "use client";
 
-import { format, differenceInDays, isValid } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { useFormContext } from "react-hook-form";
 import { useMemo } from "react";
 import {
@@ -9,16 +9,7 @@ import {
   SectionParagraph,
 } from "../blocks/block";
 import { useRoom } from "@/utils/store/room-store";
-
-// Utility functions
-const formatCurrency = (amount: number) =>
-  new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(amount);
-
-const formatDate = (date: Date) =>
-  isValid(date) ? format(date, "haaa, EEE, MMM dd") : "Invalid date";
+import { formatCurrency, formatDate } from "@/utils/format-utils";
 
 function BookingDetails() {
   const methods = useFormContext();
@@ -29,8 +20,6 @@ function BookingDetails() {
   const checkINOutDate = getValues("checkInOutDate");
   const checkInDate = new Date(checkINOutDate?.from || 0);
   const checkOutDate = new Date(checkINOutDate?.to || 0);
-
-  console.log("checkINOutDate", checkINOutDate);
 
   // Room data
   const room = useRoom(targetRoomId);

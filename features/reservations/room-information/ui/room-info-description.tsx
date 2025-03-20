@@ -3,7 +3,9 @@
 import { CardContent } from "@/components/ui/card";
 import { getStatusColor } from "@/features/rooms/utils/get-status-color";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/utils/format-utils";
 import { useRoom } from "@/utils/store/room-store";
+import { stringTransform } from "@/utils/string-transform";
 import { Users } from "lucide-react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
@@ -12,6 +14,7 @@ function RoomInfoDescription() {
   const method = useFormContext();
   const targetRoomId = method.getValues("roomType");
   const room = useRoom(targetRoomId);
+  const roomPrice = room?.price || 0;
 
   return (
     <div className="space-y-1">
@@ -27,7 +30,7 @@ function RoomInfoDescription() {
           />
           <span className="text-xs text-neutral-600 font-semibold">Price:</span>
           <span className="text-green-forest text-xs font-extrabold">
-            N{room?.price}/Night
+            {formatCurrency(roomPrice)}/Night
           </span>
         </div>
 
@@ -69,7 +72,7 @@ function RoomInfoDescription() {
             Bed Name
           </span>
           <span className="text-xs text-neutral-600 font-semibold">
-            {room?.bed_type}
+            {stringTransform(room?.bed_type)}
           </span>
         </div>
 
@@ -90,7 +93,7 @@ function RoomInfoDescription() {
               getStatusColor(room ? room.status : "commissioned")
             )}
           >
-            {room?.status}
+            {stringTransform(room?.status || "")}
           </span>
         </div>
 

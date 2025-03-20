@@ -2,6 +2,7 @@
 
 import { SelectItem } from "@/components/ui/select";
 import { useRoomStore, useRoomActions } from "@/utils/store/room-store";
+import { stringTransform } from "@/utils/string-transform";
 
 const RoomTypeList: React.FC = () => {
   const { roomIds } = useRoomStore();
@@ -23,7 +24,7 @@ const RoomTypeList: React.FC = () => {
     <>
       {data.map(({ room_type, id }) => (
         <SelectItem key={id} value={id}>
-          {room_type}
+          {stringTransform(room_type)}
         </SelectItem>
       ))}
     </>

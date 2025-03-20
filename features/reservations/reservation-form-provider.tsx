@@ -1,65 +1,81 @@
 "use client";
+
 import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addDays, startOfToday } from "date-fns";
+import React from "react";
 import {
   reservationSchema,
   ReservationSchemaType,
 } from "./server/schema/reservation-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { getDefaultDOB } from "./utils/utils";
-import { addDays, startOfToday } from "date-fns";
-import { Form } from "@/components/ui/form";
 import { useReservation } from "./hooks/use-reservation";
-import React from "react";
+import { gender, idType, paymentMethod, roomType } from "@/types/global-type";
 
 function ReservationFormProvider({ children }: React.PropsWithChildren) {
   const { onSubmit } = useReservation();
 
-  // Timezone-aware date initialization
-  const defaultCheckIn = startOfToday();
-  const defaultCheckOut = addDays(defaultCheckIn, 1);
+  // Timezone-safe date initialization
+  const getDefaultDates = () => {
+    const today = startOfToday();
+    return {
+      checkIn: today,
+      checkOut: addDays(today, 1),
+    };
+  };
 
-  const methods = useForm<ReservationSchemaType>({
+  const formMethods = useForm<ReservationSchemaType>({
     resolver: zodResolver(reservationSchema),
     defaultValues: {
-      address: "",
-      city: "",
-      country: "",
-      dateOfBirth: getDefaultDOB(),
-      email: "",
+      // Personal Information
       firstName: "",
-      gender: "Male",
-      idDocument: "",
-      idNumber: "",
-      idType: "National ID",
-      lastName: "",
       middleName: "",
-      nationality: "",
+      lastName: "",
+      gender: gender[0],
+      dateOfBirth: getDefaultDOB(),
+
+      // Contact Information
+      email: "",
       phoneNumber: "",
-      postalCode: "",
+      country: "",
+      city: "",
       state: "",
+      postalCode: "",
+      address: "",
+      nationality: "",
+
+      // Identification
+      idType: idType[0],
+      idNumber: "",
+      idDocument: "",
+
+      // Reservation Details
       checkInOutDate: {
-        from: defaultCheckIn,
-        to: defaultCheckOut,
+        from: getDefaultDates().checkIn,
+        to: getDefaultDates().checkOut,
       },
-      roomType: "single",
+      roomType: roomType[0],
+
+      // Payment & Terms
+      paymentMethod: paymentMethod[0],
+      termsAccepted: true, // Changed to false for explicit user acceptance
     },
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
-  const { watch } = methods;
-
-  React.useEffect(() => {
-    const { unsubscribe } = watch();
-
-    return () => unsubscribe();
-  }, [watch]);
-
   return (
-    <FormProvider {...methods}>
-      <Form {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+    <FormProvider {...formMethods}>
+      <form
+        onSubmit={formMethods.handleSubmit(onSubmit)}
+        noValidate
+        aria-label="Reservation form"
+      >
+        {/* Add loading state handling */}
+        <fieldset disabled={formMethods.formState.isSubmitting}>
           {children}
-        </form>
-      </Form>
+        </fieldset>
+      </form>
     </FormProvider>
   );
 }

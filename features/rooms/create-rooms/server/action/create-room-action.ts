@@ -2,17 +2,11 @@
 
 import { v4 } from "uuid";
 import { createClient } from "@/utils/supabase/server";
-import { ServerResponse } from "@/types/global-type";
+import { ServerResponse, UploadFileProps } from "@/types/global-type";
 import {
   serverRoomSchema,
   ServerRoomSchema,
 } from "../../schema/create-room-schema";
-
-interface UploadFileWithSupabaseProps {
-  files: any[];
-  tenantId: string;
-  service?: string;
-}
 
 const transformFormData = (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
@@ -38,7 +32,7 @@ const uploadFilesWithSupabase = async ({
   files,
   tenantId,
   service = "hotel",
-}: UploadFileWithSupabaseProps) => {
+}: UploadFileProps) => {
   const supabase = await createClient();
   const uploadResults = [];
   const uniqueId = v4();

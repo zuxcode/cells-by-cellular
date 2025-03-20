@@ -22,11 +22,12 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
   const { files, resetImage } = useImageUploaderStore();
 
   const tenant = useCurrentTenant();
-  const services = tenant.services;
-  const serviceKey =  Object.keys(services)[0]
+
+  const services = tenant?.services;
+  const serviceKey = Object.keys(services || [])[0];
 
   const validateContext = () => {
-    if (tenant.length <= 0) {
+    if (tenant === null) {
       toast.error("Missing organization context");
       return false;
     }
@@ -52,7 +53,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
       setIsLoading(true);
 
       if (!validateContext()) {
-        setIsLoading(false)
+        setIsLoading(false);
         return;
       }
 
@@ -69,10 +70,12 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
         }
       });
 
-      formData.append("tenantId", tenant.id);
-      formData.append("serviceId", services[serviceKey].id);
-      formData.append("staffId", tenant.staffId);
-      formData.append("roleId", tenant.roleId);
+      if (tenant && services) {
+        formData.append("tenantId", tenant.id);
+        formData.append("serviceId", services[serviceKey].id);
+        formData.append("staffId", tenant.staffId);
+        formData.append("roleId", tenant.roleId);
+      }
 
       try {
         const result = await createRoomAction(formData);

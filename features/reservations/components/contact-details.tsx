@@ -29,15 +29,11 @@ import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-import { GENDERS } from "@/utils/zod-schema";
 import { keyExtractor } from "@/utils/key-extractor";
-import { ID_TYPES } from "../server/schema/reservation-schema";
-import { useRoom } from "@/utils/store/room-store";
+import { gender, idType } from "@/types/global-type";
 
 function ContactDetails() {
   const method = useFormContext();
-  // const targetRoomId = method.getValues("roomType");
-  // const room = useRoom(targetRoomId);
   
   return (
     <Card className="shadow-md">
@@ -120,7 +116,7 @@ function ContactDetails() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {GENDERS.map((option) => (
+                    {gender.map((option) => (
                       <SelectItem key={option} value={option}>
                         {option}
                       </SelectItem>
@@ -379,7 +375,7 @@ function ContactDetails() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {ID_TYPES.map((option, index) => (
+                    {idType.map((option, index) => (
                       <SelectItem
                         key={keyExtractor(option, index)}
                         value={option}

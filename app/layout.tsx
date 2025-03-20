@@ -39,7 +39,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main>{children}</main>
+          <main className="h-full">{children}</main>
           <Footer />
           <Toaster position="top-right" />
         </ThemeProvider>
