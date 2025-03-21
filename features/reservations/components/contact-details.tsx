@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import csc from "countries-states-cities";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -30,11 +31,13 @@ import React from "react";
 import { useFormContext } from "react-hook-form";
 
 import { keyExtractor } from "@/utils/key-extractor";
-import { gender, idType } from "@/types/global-type";
+import { ACCEPTED_FILE_TYPES, gender, idType } from "@/types/global-type";
+import { useReservation } from "../hooks/use-reservation";
 
 function ContactDetails() {
   const method = useFormContext();
-  
+  const { handleOnChangeFile } = useReservation();
+
   return (
     <Card className="shadow-md">
       <CardHeader className="p-4">
@@ -413,16 +416,23 @@ function ContactDetails() {
           <FormField
             control={method.control}
             name="idDocument"
-            render={({ field }) => (
+            render={({ field: { onChange, ...rest } }) => (
               <FormItem className="w-full">
+                <FormLabel className="sr-only">Upload Document</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
                     placeholder="Browse..."
                     disabled={method.formState.isSubmitting}
                     aria-disabled={method.formState.isSubmitting}
+                    multiple
+                    accept={ACCEPTED_FILE_TYPES.join(",")}
+                    onChange={(e) => {
+                      onChange(e);
+                      handleOnChangeFile(e);
+                    }}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
-                    {...field}
+                    {...rest}
                   />
                 </FormControl>
                 <FormMessage />

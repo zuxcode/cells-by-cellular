@@ -33,7 +33,7 @@ import { useCreateRoom } from "../hooks/use-create-room";
 import { Uploader } from "./uploader";
 
 function CreateRoomForm() {
-  const { onSubmit, isLoading, sectionControl } = useCreateRoom();
+  const { onSubmit, isLoading } = useCreateRoom();
   const form = useForm<RoomSchemaType>({
     mode: "all",
     resolver: zodResolver(roomSchema),

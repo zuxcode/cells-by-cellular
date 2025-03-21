@@ -180,24 +180,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "amount_matches_reservation"
-            columns: ["reservation_id"]
-            isOneToOne: false
-            referencedRelation: "reservations"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "checkout_guest_contact_details_id_fkey"
             columns: ["guest_contact_details_id"]
             isOneToOne: false
             referencedRelation: "guest_contact_details"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "checkout_reservation_id_fkey"
-            columns: ["reservation_id"]
-            isOneToOne: false
-            referencedRelation: "reservations"
             referencedColumns: ["id"]
           },
           {
@@ -361,11 +347,10 @@ export type Database = {
       }
       reservations: {
         Row: {
-          adults: number
           check_in: string
           check_out: string
-          children: number
           created_at: string
+          guest: number
           id: string
           room_id: string
           special_requests: string | null
@@ -375,11 +360,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          adults: number
           check_in: string
           check_out: string
-          children?: number
           created_at?: string
+          guest: number
           id?: string
           room_id: string
           special_requests?: string | null
@@ -389,11 +373,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          adults?: number
           check_in?: string
           check_out?: string
-          children?: number
           created_at?: string
+          guest?: number
           id?: string
           room_id?: string
           special_requests?: string | null
@@ -795,34 +778,66 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_booking: {
-        Args: {
-          p_tenant_id: string
-          p_first_name: string
-          p_last_name: string
-          p_email: string
-          p_dob: string
-          p_phone_number: string
-          p_nationality: string
-          p_country_of_residence: string
-          p_postal_code: string
-          p_address: string
-          p_city_or_town: string
-          p_id_type: Database["public"]["Enums"]["id_type_enum"]
-          p_id_card_url: string
-          p_room_id: string
-          p_check_in: string
-          p_check_out: string
-          p_adults: number
-          p_children: number
-          p_total_price: number
-          p_special_requests: string
-          p_payment_method: Database["public"]["Enums"]["payment_method_enum"]
-          p_amount: number
-          p_transaction_id: string
-        }
-        Returns: Database["public"]["CompositeTypes"]["api_response"]
-      }
+      create_booking:
+        | {
+            Args: {
+              p_tenant_id: string
+              p_first_name: string
+              p_last_name: string
+              p_email: string
+              p_dob: string
+              p_phone_number: string
+              p_nationality: string
+              p_country_of_residence: string
+              p_postal_code: string
+              p_address: string
+              p_city_or_town: string
+              p_id_type: Database["public"]["Enums"]["id_type_enum"]
+              p_id_card_url: string
+              p_id_number: string
+              p_room_type: string
+              p_room_id: string
+              p_check_in: string
+              p_check_out: string
+              p_adults: number
+              p_children: number
+              p_total_price: number
+              p_special_requests: string
+              p_payment_method: Database["public"]["Enums"]["payment_method_enum"]
+              p_amount: number
+              p_transaction_id: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["api_response"]
+          }
+        | {
+            Args: {
+              p_tenant_id: string
+              p_first_name: string
+              p_last_name: string
+              p_email: string
+              p_dob: string
+              p_phone_number: string
+              p_nationality: string
+              p_country_of_residence: string
+              p_postal_code: string
+              p_address: string
+              p_city_or_town: string
+              p_id_type: Database["public"]["Enums"]["id_type_enum"]
+              p_id_card_url: string
+              p_id_number: string
+              p_room_type: string
+              p_room_id: string
+              p_check_in: string
+              p_check_out: string
+              p_guest_count: number
+              p_total_price: number
+              p_special_requests: string
+              p_payment_method: Database["public"]["Enums"]["payment_method_enum"]
+              p_amount: number
+              p_transaction_id: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["api_response"]
+          }
       create_tenant_and_related:
         | {
             Args: {

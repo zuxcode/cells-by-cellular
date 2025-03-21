@@ -15,9 +15,9 @@ import { useFormContext } from "react-hook-form";
 import { useRoom } from "@/utils/store/room-store";
 import { formatCurrency } from "@/utils/format-utils";
 import { useEffect, useState } from "react";
-import { isValid, differenceInDays } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { PaymentMethodType } from "@/types/global-type";
-
+import { useCheckout } from "./hooks/use-checkout";
 
 function CheckOut() {
   const {
@@ -26,9 +26,9 @@ function CheckOut() {
     trigger,
     formState: { isValid: isFormValid },
   } = useFormContext();
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethodType | null>(
-    null
-  );
+  const [selectedPayment, setSelectedPayment] =
+    useState<PaymentMethodType | null>(null);
+  const { handleCheckout, isLoading } = useCheckout();
 
   // Watched form values
   const targetRoomId = watch("roomType");
@@ -75,11 +75,6 @@ function CheckOut() {
     setValue("paymentMethod", selectedPayment);
     trigger("paymentMethod");
   }, [selectedPayment, setValue, trigger]);
-
-  const handleReservation = () => {
-    if (!isFormValid) return;
-    // Submit logic here
-  };
 
   return (
     <Card className="shadow-md border-black bg-canvas-cool">
@@ -157,7 +152,7 @@ function CheckOut() {
           <Button
             type="submit"
             className="w-full bg-green-forest font-bold hover:bg-green-700"
-            onClick={handleReservation}
+            onClick={handleCheckout.bind(null)}
             disabled={!isFormValid || !selectedPayment}
             aria-disabled={!isFormValid || !selectedPayment}
           >

@@ -1,68 +1,129 @@
-import { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
-import { ReservationSchemaType } from "../../server/schema/reservation-schema";
+import { useCurrentTenant, useCurrentService } from "@/utils/store/tenant";
 import { ServerResponse } from "@/types/global-type";
 
-interface CheckoutData {
-  reservationId: string;
-  paymentMethod: string;
-  additionalNotes?: string;
+import {
+  UseFormReset,
+  UseFormSetError,
+  FieldValues,
+  useFormContext,
+} from "react-hook-form";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+
+import { ReservationSchemaType } from "../../server/schema/reservation-schema";
+import { useReservationStore } from "../../stores/reservation-store";
+import { checkoutAction } from "../actions/checkout-action";
+
+interface Props {
+  data: ReservationSchemaType;
+  reset: UseFormReset<FieldValues>;
+  setError: UseFormSetError<FieldValues>;
 }
 
-interface UseCheckoutResult {
+type CheckoutHandler = () => Promise<void>;
+
+type UseCheckoutReturn = {
+  handleCheckout: CheckoutHandler;
   isLoading: boolean;
-  error: string | null;
-  handleCheckout: (data: CheckoutData) => Promise<void>;
-}
+};
 
-export const useCheckout = (): UseCheckoutResult => {
+export const useCheckout = (): UseCheckoutReturn => {
+  const { getValues, reset, setError } = useFormContext();
+  const { fileState, removeFile } = useReservationStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const tenant = useCurrentTenant();
+  const service = useCurrentService();
 
-  const handleFormErrors = (
-    form: UseFormReturn<ReservationSchemaType>,
-    result: ServerResponse<ReservationSchemaType>
-  ) => {
+  const validateContext = () => {
+    const missing = [];
+    if (!tenant) missing.push("organization context");
+    if (!service) missing.push("service context");
+
+    if (missing.length > 0) {
+      toast.error(`Missing ${missing.join(" and ")}`);
+      return false;
+    }
+    return true;
+  };
+
+  const handleFormErrors = (result: ServerResponse<ReservationSchemaType>) => {
     if (result.fieldErrors) {
       Object.entries(result.fieldErrors).forEach(([field, messages]) => {
-        const key = field as keyof ReservationSchemaType;
-        if (Object.keys(form.formState.errors).includes(key)) {
-          form.setError(key, { message: messages?.join(", ") });
-        }
+        setError(field as keyof ReservationSchemaType, {
+          type: "server",
+          message: messages?.join(". ") || "Invalid value",
+        });
       });
     }
   };
 
-  const handleCheckout = async (data: CheckoutData): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
+  const serializeFormData = (data: ReservationSchemaType): FormData => {
+    const formData = new FormData();
+    const { checkInOutDate, dateOfBirth, ...rest } = data;
 
+    // Append dates as ISO strings
+    formData.append("checkInOutDate.from", checkInOutDate.from.toISOString());
+    formData.append("checkInOutDate.to", checkInOutDate.to.toISOString());
+    formData.append("dateOfBirth", dateOfBirth.toISOString());
+
+    // Append other fields with type preservation
+    Object.entries(rest).forEach(([key, value]) => {
+      if (value instanceof Date) {
+        formData.append(key, value.toISOString());
+      } else if (typeof value === "number") {
+        formData.append(key, value.toString());
+      } else if (typeof value === "boolean") {
+        formData.append(key, value ? "true" : "false");
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+
+    // Append file if exists
+    if (fileState?.file) {
+      formData.append("idDocument", fileState.file);
+    }
+
+    // Append context information
+    if (tenant && service) {
+      formData.append("tenantId", tenant.id);
+      formData.append("serviceId", service.id);
+      formData.append("staffId", tenant.staffId);
+      formData.append("roleId", tenant.roleId);
+    }
+
+    return formData;
+  };
+
+  const handleCheckout = React.useCallback<CheckoutHandler>(async () => {
     try {
-      // Simulate API call
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      setIsLoading(true);
 
-      if (!response.ok) {
-        throw new Error("Failed to process checkout");
+      const data = getValues() as ReservationSchemaType;
+
+      if (!validateContext()) return;
+
+      const formData = serializeFormData(data);
+      const result = await checkoutAction(formData);
+
+      if (result.status === "success") {
+        toast.success(result.message);
+        removeFile();
+        reset();
+        return;
       }
 
-      // Handle success (e.g., show confirmation, update state)
-      console.log("Checkout successful");
-    } catch (err: any) {
-      setError(err.message || "An unknown error occurred");
+      handleFormErrors(result);
+      toast.error(result.message || "Booking submission failed");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      const message =
+        error instanceof Error ? error.message : "Failed to process booking";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fileState, removeFile, tenant, service]);
 
-  return {
-    isLoading,
-    error,
-    handleCheckout,
-  };
+  return { isLoading, handleCheckout };
 };

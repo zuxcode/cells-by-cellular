@@ -28,11 +28,19 @@ export type ServerResponse<T = unknown, D = unknown> = {
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
 
+// 
 export interface UploadFileProps {
   files: any[];
   tenantId: string;
   service?: string;
 }
+
+export const tenantIdentity = z.object({
+  tenantId: z.string().nonempty("Tenant id is required"),
+  roleId: z.string().nonempty("Role id is required"),
+  staffId: z.string().nonempty("Staff id is required"),
+  serviceId: z.string().nonempty("Service id is required"),
+})
 
 
 // Directly use database enums to avoid duplication
@@ -170,6 +178,9 @@ export type PaymentMethodType = z.infer<typeof PaymentMethodSchema>;
 export type IDType = z.infer<typeof IDTypeSchema>;
 export type GenderType = z.infer<typeof GenderSchema>;
 export type RoleType = z.infer<typeof RoleSchema>;
+
+
+export type TenantIdentity = z.infer<typeof tenantIdentity>
 
 // Schema exports
 export {
