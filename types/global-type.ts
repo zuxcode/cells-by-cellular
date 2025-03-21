@@ -1,14 +1,23 @@
+import { stringTransform } from "@/utils/string-transform";
 import { Database } from "@/utils/supabase/db-type";
 import { z } from "zod";
 
 // Constants
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const maxSizeMB = MAX_FILE_SIZE / 1024 / 1024;
+
 export const ACCEPTED_FILE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
 ] as const;
 export const MAX_FILE_COUNT = 10;
+
+const magicNumbers: Record<string, [number, number[]]> = {
+  "image/jpeg": [0, [0xff, 0xd8, 0xff]],
+  "image/png": [0, [0x89, 0x50, 0x4e, 0x47]],
+  "application/pdf": [0, [0x25, 0x50, 0x44, 0x46]],
+};
 
 // Types
 export interface FileWithId extends File {
@@ -28,7 +37,7 @@ export type ServerResponse<T = unknown, D = unknown> = {
   fieldErrors?: z.typeToFlattenedError<T>["fieldErrors"];
 };
 
-// 
+//
 export interface UploadFileProps {
   files: any[];
   tenantId: string;
@@ -40,8 +49,7 @@ export const tenantIdentity = z.object({
   roleId: z.string().nonempty("Role id is required"),
   staffId: z.string().nonempty("Staff id is required"),
   serviceId: z.string().nonempty("Service id is required"),
-})
-
+});
 
 // Directly use database enums to avoid duplication
 type BedTypeLiteral = Database["public"]["Enums"]["bed_type"];
@@ -59,7 +67,7 @@ const createEnumSchema = <T extends readonly [string, ...string[]]>(
 ) =>
   z.enum(values, {
     errorMap: () => ({
-      message: `Please select a valid ${name}. Options: ${values.join(", ")}`,
+      message: `Please select a valid ${name}. Options: ${stringTransform(values.join(", "))}`,
     }),
   });
 
@@ -136,39 +144,89 @@ const IDTypeSchema = createEnumSchema(idType, "ID type");
 const GenderSchema = createEnumSchema(gender, "gender");
 const RoleSchema = createEnumSchema(role, "role");
 
-// File validation improvements
+// Pre-calculate values
 const acceptedTypesString = Array.from(
-  new Set(ACCEPTED_FILE_TYPES.map((t) => t.split("/")[1]))
+  new Set(ACCEPTED_FILE_TYPES.map((t) => t.split("/")[1].toUpperCase()))
 ).join(", ");
 
-export const fileSchema = z.custom<Blob>().superRefine((val, ctx) => {
-  if (val.size === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "File is required",
-    });
-  }
-  if (val.size > MAX_FILE_SIZE) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: `File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`,
-    });
-  }
-  if (
-    !ACCEPTED_FILE_TYPES.includes(
-      val.type as (typeof ACCEPTED_FILE_TYPES)[number]
-    )
-  ) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: `Only ${acceptedTypesString} files are accepted`,
-    });
-  }
-});
+const getFileExtension = (filename: string) =>
+  filename.split(".").pop()?.toLowerCase();
 
-export const filesSchema = z
-  .array(fileSchema)
-  .max(MAX_FILE_COUNT, `Maximum ${MAX_FILE_COUNT} files allowed`);
+const validateMagicNumbers = (buffer: Buffer, expectedType: string) => {
+  const [offset, expected] = magicNumbers[expectedType];
+  return expected.every((byte, index) => buffer[offset + index] === byte);
+};
+
+export const fileSchema =
+  typeof window === "undefined"
+    ? // Server-side validation (RSC safe)
+      z
+        .object({
+          name: z.string().min(1),
+          size: z.number().min(1).max(MAX_FILE_SIZE),
+          type: z.enum([...ACCEPTED_FILE_TYPES] as [string, ...string[]]),
+          data: z.instanceof(Buffer),
+        })
+        .superRefine((file, ctx) => {
+          // Validate file extension
+          const extension = getFileExtension(file.name);
+          const expectedExtension = file.type.split("/")[1];
+
+          if (extension !== expectedExtension) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "File extension mismatch",
+            });
+          }
+
+          // Validate magic numbers
+          if (!validateMagicNumbers(file.data, file.type)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Invalid file content",
+            });
+          }
+        })
+    : // Client-side validation
+      z.instanceof(FileList).superRefine((files, ctx) => {
+        // Validate file count
+        if (files.length === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "At least one file is required",
+          });
+        }
+
+        if (files.length > MAX_FILE_COUNT) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Maximum ${MAX_FILE_COUNT} files allowed`,
+          });
+        }
+
+        // Validate individual files
+        Array.from(files).forEach((file, index) => {
+          // File size validation
+          if (file.size > MAX_FILE_SIZE) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `File ${index + 1} exceeds ${maxSizeMB}MB limit`,
+            });
+          }
+
+          // File type validation
+          if (
+            !ACCEPTED_FILE_TYPES.includes(
+              file.type as (typeof ACCEPTED_FILE_TYPES)[number]
+            )
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `File ${index + 1} must be ${acceptedTypesString}`,
+            });
+          }
+        });
+      });
 
 // Type exports
 export type BedType = z.infer<typeof BedTypeSchema>;
@@ -179,8 +237,7 @@ export type IDType = z.infer<typeof IDTypeSchema>;
 export type GenderType = z.infer<typeof GenderSchema>;
 export type RoleType = z.infer<typeof RoleSchema>;
 
-
-export type TenantIdentity = z.infer<typeof tenantIdentity>
+export type TenantIdentity = z.infer<typeof tenantIdentity>;
 
 // Schema exports
 export {

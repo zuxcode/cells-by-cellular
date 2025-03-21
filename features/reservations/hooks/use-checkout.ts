@@ -1,24 +1,13 @@
 import { useCurrentTenant, useCurrentService } from "@/utils/store/tenant";
 import { ServerResponse } from "@/types/global-type";
 
-import {
-  UseFormReset,
-  UseFormSetError,
-  FieldValues,
-  useFormContext,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-import { ReservationSchemaType } from "../../server/schema/reservation-schema";
-import { useReservationStore } from "../../stores/reservation-store";
+import { ReservationSchemaType } from "../schema/reservation-schema";
+import { useReservationStore } from "../stores/reservation-store";
 import { checkoutAction } from "../actions/checkout-action";
-
-interface Props {
-  data: ReservationSchemaType;
-  reset: UseFormReset<FieldValues>;
-  setError: UseFormSetError<FieldValues>;
-}
 
 type CheckoutHandler = () => Promise<void>;
 

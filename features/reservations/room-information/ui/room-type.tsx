@@ -15,9 +15,13 @@ import {
 } from "@/components/ui/select";
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { ReservationSchemaType } from "../../schema/reservation-schema";
+import { useRoomActions } from "@/utils/store/room-store";
 
 function RoomType({ children }: React.PropsWithChildren) {
-  const method = useFormContext();
+  const method = useFormContext<ReservationSchemaType>();
+  const { selectRoom } = useRoomActions();
+
   return (
     <FormField
       control={method.control}
@@ -27,9 +31,15 @@ function RoomType({ children }: React.PropsWithChildren) {
           <FormLabel className="text-xs text-neutral-600 font-semibold">
             Choose Room
           </FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={(e) => {
+              field.onChange(e);
+              method.trigger("roomType");
+            }}
+            defaultValue={field.value}
+          >
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger >
                 <SelectValue placeholder="Select room type" />
               </SelectTrigger>
             </FormControl>

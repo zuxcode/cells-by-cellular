@@ -13,6 +13,8 @@ import { useFormContext } from "react-hook-form";
 function RoomInfoDescription() {
   const method = useFormContext();
   const targetRoomId = method.getValues("roomType");
+  console.log();
+  
   const room = useRoom(targetRoomId);
   const roomPrice = room?.price || 0;
 
@@ -41,7 +43,7 @@ function RoomInfoDescription() {
               Max Guest:
             </span>
             <span className="text-white text-xs bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
-              {room?.guest_max}
+              {room?.guest_max || 0}
             </span>
           </div>
 
@@ -55,7 +57,7 @@ function RoomInfoDescription() {
             />
             <span className="text-xs text-neutral-600 font-semibold">Bed:</span>
             <span className="text-white text-xs bg-neutral-600 rounded-full h-4 aspect-square flex items-center justify-center">
-              {room?.bed_max}
+              {room?.bed_max || 0}
             </span>
           </div>
         </div>
@@ -93,7 +95,7 @@ function RoomInfoDescription() {
               getStatusColor(room ? room.status : "commissioned")
             )}
           >
-            {stringTransform(room?.status || "")}
+            {stringTransform(room?.status)}
           </span>
         </div>
 

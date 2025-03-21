@@ -1,3 +1,2 @@
-export { ReservationHeader } from "./reservation-header";
+export { ReservationHeader } from "./components/reservation-header";
 export { Reservations } from "./reservations";
-export { ReservationFormProvider } from "./reservation-form-provider";

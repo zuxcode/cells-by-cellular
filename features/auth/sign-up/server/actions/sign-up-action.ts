@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { User } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/server";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import { ServerResponse } from "@/types/global-type";
 import {
   SignUpSchemaType,
@@ -59,7 +59,7 @@ const createTenant = async ({
   id,
 }: Pick<SignUpSchemaType, "fullName"> & User): Promise<TenantRPCResponse> => {
   try {
-    const supabase = await createClient();
+    const supabase = await createSupabaseServerClientWithCookies();
     const { firstName, middleName, lastName } = parseFullName(fullName);
     const tenantName = `${firstName}'s Organization`;
     const { error, data } = await supabase
@@ -100,7 +100,7 @@ const signUpWithSupabase = async ({
   password,
   fullName,
 }: SignUpSchemaType) => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   const origin = (await headers()).get("origin");
   const { error, data } = await supabase.auth.signUp({
     email,

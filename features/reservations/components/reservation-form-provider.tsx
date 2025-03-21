@@ -7,14 +7,12 @@ import React from "react";
 import {
   reservationSchema,
   ReservationSchemaType,
-} from "./server/schema/reservation-schema";
-import { getDefaultDOB } from "./utils/utils";
-import { useReservation } from "./hooks/use-reservation";
+} from "../schema/reservation-schema";
+import { getDefaultDOB } from "../utils/utils";
 import { gender, idType, paymentMethod, roomType } from "@/types/global-type";
+import { ReservationForm } from "./form-provider";
 
 function ReservationFormProvider({ children }: React.PropsWithChildren) {
-  const { onSubmit } = useReservation();
-
   // Timezone-safe date initialization
   const getDefaultDates = () => {
     const today = startOfToday();
@@ -66,16 +64,7 @@ function ReservationFormProvider({ children }: React.PropsWithChildren) {
 
   return (
     <FormProvider {...formMethods}>
-      <form
-        onSubmit={formMethods.handleSubmit(onSubmit)}
-        noValidate
-        aria-label="Reservation form"
-      >
-        {/* Add loading state handling */}
-        <fieldset disabled={formMethods.formState.isSubmitting}>
-          {children}
-        </fieldset>
-      </form>
+      <ReservationForm>{children}</ReservationForm>
     </FormProvider>
   );
 }

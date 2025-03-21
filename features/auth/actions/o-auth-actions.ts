@@ -1,7 +1,7 @@
 "use server";
 
 import { ServerResponse } from "@/types/global-type";
-import { createClient } from "@/utils/supabase/server";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -13,7 +13,7 @@ import { redirect } from "next/navigation";
  */
 async function handleOAuthSignIn(provider: Provider): Promise<ServerResponse> {
   const origin = (await headers()).get("origin");
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
 
   if (!origin) {
     return { status: "error", message: "Origin header is missing" };

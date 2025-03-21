@@ -139,6 +139,7 @@ export const useRoomStore = create<RoomsState>((set, get) => {
         return targetId ? state.roomsById[targetId] : undefined;
       },
 
+      // Set selectRoom
       selectRoom: (roomId) => {
         set({ selectedRoomId: roomId });
       },

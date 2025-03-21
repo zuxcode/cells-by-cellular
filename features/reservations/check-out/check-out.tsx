@@ -14,26 +14,32 @@ import {
 import { useFormContext } from "react-hook-form";
 import { useRoom } from "@/utils/store/room-store";
 import { formatCurrency } from "@/utils/format-utils";
-import { useEffect, useState } from "react";
 import { differenceInDays } from "date-fns";
 import { PaymentMethodType } from "@/types/global-type";
-import { useCheckout } from "./hooks/use-checkout";
+import { useCheckout } from "../hooks/use-checkout";
+import { ActionLabel, ActionTrigger } from "@/components/button";
+import { ReservationSchemaType } from "../schema/reservation-schema";
 
 function CheckOut() {
   const {
     watch,
     setValue,
     trigger,
-    formState: { isValid: isFormValid },
-  } = useFormContext();
-  const [selectedPayment, setSelectedPayment] =
-    useState<PaymentMethodType | null>(null);
-  const { handleCheckout, isLoading } = useCheckout();
+    getValues,
+    formState: { isValid: isFormValid,  errors},
+  } = useFormContext<ReservationSchemaType>();
+  const { isLoading } = useCheckout();
+
+  console.log("errors ", errors);
+  console.log("getValues " , getValues());
+  
+
 
   // Watched form values
   const targetRoomId = watch("roomType");
   const checkInOutDate = watch("checkInOutDate");
   const termsAccepted = watch("termsAccepted");
+  const paymentMethod = watch("paymentMethod");
 
   // Room data
   const room = useRoom(targetRoomId);
@@ -70,11 +76,12 @@ function CheckOut() {
     },
   ];
 
-  // Update form values
-  useEffect(() => {
-    setValue("paymentMethod", selectedPayment);
+  const handlePaymentMethod = (
+    props: ReservationSchemaType["paymentMethod"]
+  ) => {
+    setValue("paymentMethod", props);
     trigger("paymentMethod");
-  }, [selectedPayment, setValue, trigger]);
+  };
 
   return (
     <Card className="shadow-md border-black bg-canvas-cool">
@@ -110,7 +117,12 @@ function CheckOut() {
           </SectionContent>
           <Checkbox
             checked={termsAccepted}
-            onCheckedChange={(checked) => setValue("termsAccepted", !!checked)}
+            onCheckedChange={(checked) =>
+              setValue(
+                "termsAccepted",
+                typeof checked === "string" ? false : !!checked
+              )
+            }
             className="data-[state=checked]:bg-green-forest data-[state=checked]:text-white self-end"
             aria-label="Accept terms of service"
           />
@@ -128,10 +140,10 @@ function CheckOut() {
               key={method.id}
               variant="outline"
               type="button"
-              onClick={() => setSelectedPayment(method.id)}
+              onClick={handlePaymentMethod.bind(null, method.id)}
               className={`w-full h-12 flex justify-between text-black 
-                ${selectedPayment === method.id ? "border-2 border-green-forest" : ""}`}
-              aria-pressed={selectedPayment === method.id}
+                ${paymentMethod === method.id ? "border-2 border-green-forest" : ""}`}
+              aria-pressed={paymentMethod === method.id}
             >
               <span>{method.label}</span>
               <Image
@@ -149,15 +161,14 @@ function CheckOut() {
 
         {/* Reservation Button */}
         <section className="px-2">
-          <Button
+          <ActionTrigger
             type="submit"
-            className="w-full bg-green-forest font-bold hover:bg-green-700"
-            onClick={handleCheckout.bind(null)}
-            disabled={!isFormValid || !selectedPayment}
-            aria-disabled={!isFormValid || !selectedPayment}
+            className="w-full"
+            disabled={!isFormValid || isLoading}
+            aria-disabled={!isFormValid || isLoading}
           >
-            RESERVE
-          </Button>
+            <ActionLabel>RESERVE</ActionLabel>
+          </ActionTrigger>
         </section>
       </CardContent>
     </Card>

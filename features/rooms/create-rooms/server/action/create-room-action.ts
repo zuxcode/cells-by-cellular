@@ -1,7 +1,7 @@
 "use server";
 
 import { v4 } from "uuid";
-import { createClient } from "@/utils/supabase/server";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import { ServerResponse, UploadFileProps } from "@/types/global-type";
 import {
   serverRoomSchema,
@@ -33,7 +33,7 @@ const uploadFilesWithSupabase = async ({
   tenantId,
   service = "hotel",
 }: UploadFileProps) => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   const uploadResults = [];
   const uniqueId = v4();
   try {
@@ -96,7 +96,7 @@ const createRoomWithSupabase = async (props: ServerRoomSchema) => {
     serviceId,
     staffId
   } = props;
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
 
   const uploadResults = await uploadFilesWithSupabase({
     files,

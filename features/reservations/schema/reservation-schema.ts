@@ -84,15 +84,13 @@ const reservationBaseSchema = z.object({
       .min(new Date(), "Check-in date cannot be in the past"),
     to: z.coerce.date(),
   }),
-  roomType: RoomTypeSchema,
+  roomType: RoomTypeSchema.optional(),
   specialRequests: z.string().optional(),
   guest: z.coerce.number().positive(),
 
   // Payment & Agreement
   paymentMethod: PaymentMethodSchema,
-  termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms and conditions" }),
-  }),
+  termsAccepted: z.boolean(),
 });
 
 const reservationServerSchema = reservationBaseSchema

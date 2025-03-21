@@ -1,9 +1,11 @@
+"use server";
+
 import { ServerResponse, UploadFileProps } from "@/types/global-type";
 import {
   reservationServerSchema,
   ReservationServerSchemaType,
-} from "../../server/schema/reservation-schema";
-import { createClient } from "@/utils/supabase/server";
+} from "../schema/reservation-schema";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import { v4 } from "uuid";
 import { ZodError } from "zod";
 
@@ -62,7 +64,7 @@ const uploadFilesWithSupabase = async ({
   tenantId,
   service = "hotel",
 }: UploadProps) => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   const uniqueId = v4();
 
   try {
@@ -101,7 +103,7 @@ const uploadFilesWithSupabase = async ({
 const processBookingTransaction = async (
   props: ReservationServerSchemaType
 ) => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   let documentUrl: Awaited<ReturnType<typeof uploadFilesWithSupabase>> | null =
     null;
 

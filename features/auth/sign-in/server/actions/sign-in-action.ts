@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import {
   signInSchema,
   SignInSchemaType,
@@ -30,7 +30,7 @@ const validateFormData = (data: unknown) => {
 };
 
 const getTenantAndRelatedData = async () => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   try {
     const { data, error } = await supabase.rpc("get_tenant_and_related");
 
@@ -53,7 +53,7 @@ const getTenantAndRelatedData = async () => {
 };
 
 const signInWithSupabase = async (email: string, password: string) => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {

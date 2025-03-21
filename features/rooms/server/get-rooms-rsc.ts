@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/server";
-import { Database } from "@/utils/supabase/db-type";
+import { createSupabaseServerClientWithCookies } from "@/utils/supabase/server";
 import { RoomData } from "../stores";
+import { Room } from "@/utils/store/room-store";
 
 /**
  * This module provides functionality to fetch and transform room data from the Supabase database.
@@ -17,7 +17,7 @@ const ROOM_OCCUPIED = 3; // Number of rooms currently occupied
  * @throws {Error} If there is an error fetching data from the database.
  */
 const getRoomsWithSupabase = async (): Promise<Room[]> => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClientWithCookies();
   const { data, error } = await supabase.from("hotel_rooms").select("*");
 
   if (error) {

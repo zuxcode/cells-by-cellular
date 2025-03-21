@@ -2,10 +2,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { Poppins } from "next/font/google";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar";
 import { Footer } from "@/components/footer";
-import { Header } from "@/features/header";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -19,10 +16,10 @@ export const metadata = {
 };
 
 const poppins = Poppins({
-  subsets: ["latin"], // Choose subsets based on your language needs
+  subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"], // Specify font weights (e.g., regular & bold)
-  style: ["normal", "italic"], // Optional: Specify styles
-  display: "swap", // Improve loading performance
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -39,7 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="h-full">{children}</main>
+          <main className="h-svh">{children}</main>
           <Footer />
           <Toaster position="top-right" />
         </ThemeProvider>

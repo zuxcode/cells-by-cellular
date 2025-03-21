@@ -33,10 +33,13 @@ import { useFormContext } from "react-hook-form";
 import { keyExtractor } from "@/utils/key-extractor";
 import { ACCEPTED_FILE_TYPES, gender, idType } from "@/types/global-type";
 import { useReservation } from "../hooks/use-reservation";
+import { ReservationSchemaType } from "../schema/reservation-schema";
 
-function ContactDetails() {
-  const method = useFormContext();
+function ContactFrom() {
+  const method = useFormContext<ReservationSchemaType>();
   const { handleOnChangeFile } = useReservation();
+
+  const { onChange, ...fileRef } = method.register("idDocument");
 
   return (
     <Card className="shadow-md">
@@ -416,7 +419,7 @@ function ContactDetails() {
           <FormField
             control={method.control}
             name="idDocument"
-            render={({ field: { onChange, ...rest } }) => (
+            render={() => (
               <FormItem className="w-full">
                 <FormLabel className="sr-only">Upload Document</FormLabel>
                 <FormControl>
@@ -425,14 +428,14 @@ function ContactDetails() {
                     placeholder="Browse..."
                     disabled={method.formState.isSubmitting}
                     aria-disabled={method.formState.isSubmitting}
-                    multiple
                     accept={ACCEPTED_FILE_TYPES.join(",")}
                     onChange={(e) => {
                       onChange(e);
                       handleOnChangeFile(e);
+                      method.trigger("idDocument");
                     }}
                     className="bg-[#F4F5F7] border-[#D9D9D9] focus-visible:ring-[#D9D9D9] placeholder:text-[#696969]"
-                    {...rest}
+                    {...fileRef}
                   />
                 </FormControl>
                 <FormMessage />
@@ -445,4 +448,4 @@ function ContactDetails() {
   );
 }
 
-export { ContactDetails };
+export { ContactFrom };
